@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Capstone.Data.Migrations
+namespace Capstone.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201118161940_Initial")]
-    partial class Initial
+    [Migration("20201118195022_Nuke - Initial")]
+    partial class NukeInitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,6 +20,179 @@ namespace Capstone.Data.Migrations
                 .HasAnnotation("ProductVersion", "3.1.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("Capstone.Models.Address", b =>
+                {
+                    b.Property<int>("AddressId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("float");
+
+                    b.Property<string>("State")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StreetAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ZipCode")
+                        .HasColumnType("int");
+
+                    b.HasKey("AddressId");
+
+                    b.ToTable("Addresses");
+                });
+
+            modelBuilder.Entity("Capstone.Models.Appointment", b =>
+                {
+                    b.Property<int>("AppointmentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool?>("ApprovalStatus")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("CustomerNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsComplete")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("PianoId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ServiceEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ServiceStart")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TechnicianNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("AppointmentId");
+
+                    b.HasIndex("PianoId");
+
+                    b.ToTable("Appointments");
+                });
+
+            modelBuilder.Entity("Capstone.Models.AppointmentBlock", b =>
+                {
+                    b.Property<int>("AppointmentBlockId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("DayOfWeek")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RuleSetId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("AppointmentBlockId");
+
+                    b.HasIndex("RuleSetId");
+
+                    b.ToTable("AppointmentBlocks");
+                });
+
+            modelBuilder.Entity("Capstone.Models.Customer", b =>
+                {
+                    b.Property<int>("CustomerId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AddressId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TechnicianNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CustomerId");
+
+                    b.HasIndex("AddressId");
+
+                    b.ToTable("Customers");
+                });
+
+            modelBuilder.Entity("Capstone.Models.Piano", b =>
+                {
+                    b.Property<int>("PianoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LastService")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Make")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Model")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TechnicianNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("PianoId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("Pianos");
+                });
+
+            modelBuilder.Entity("Capstone.Models.RuleSet", b =>
+                {
+                    b.Property<int>("RuleSetId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Default")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("RuleSetId");
+
+                    b.ToTable("RuleSets");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -50,8 +223,8 @@ namespace Capstone.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "62df01ef-f188-4d38-9f1f-0b7ef88bc693",
-                            ConcurrencyStamp = "8e5182c2-20a0-437e-bb4e-deb1fda72c67",
+                            Id = "95ee9147-b541-40d4-9a7a-e93dbbdcec01",
+                            ConcurrencyStamp = "5d57cc0b-2bd4-4752-a6cc-25431719936e",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -224,6 +397,42 @@ namespace Capstone.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("Capstone.Models.Appointment", b =>
+                {
+                    b.HasOne("Capstone.Models.Piano", "Piano")
+                        .WithMany()
+                        .HasForeignKey("PianoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Capstone.Models.AppointmentBlock", b =>
+                {
+                    b.HasOne("Capstone.Models.RuleSet", "RuleSet")
+                        .WithMany()
+                        .HasForeignKey("RuleSetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Capstone.Models.Customer", b =>
+                {
+                    b.HasOne("Capstone.Models.Address", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Capstone.Models.Piano", b =>
+                {
+                    b.HasOne("Capstone.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

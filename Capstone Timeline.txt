@@ -45,3 +45,7 @@ Day 9 - 12/1/20
 Day 10 - 12/2/20
 	-Presentation!
 
+
+Things to fix:
+-ASP.NET redirecting to login page after trying to access admin controller without proper credentials
+-ERD - remove CustomerId FK reference from Appointments table
