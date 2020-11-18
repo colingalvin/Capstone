@@ -23,7 +23,12 @@ namespace Capstone.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult Services()
+        {
+            return View();
+        }
+
+        public IActionResult Schedule()
         {
             return View();
         }
