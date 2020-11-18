@@ -65,6 +65,35 @@ namespace Capstone.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PendingAppointments",
+                columns: table => new
+                {
+                    PendingAppointmentId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FirstName = table.Column<string>(nullable: true),
+                    LastName = table.Column<string>(nullable: true),
+                    Email = table.Column<string>(nullable: true),
+                    Phone = table.Column<string>(nullable: true),
+                    StreetAddress = table.Column<string>(nullable: true),
+                    City = table.Column<string>(nullable: true),
+                    State = table.Column<string>(nullable: true),
+                    ZipCode = table.Column<int>(nullable: false),
+                    PianoMake = table.Column<string>(nullable: true),
+                    PianoConfiguration = table.Column<string>(nullable: true),
+                    IncludedServices = table.Column<string>(nullable: true),
+                    EstimatedDuration = table.Column<int>(nullable: false),
+                    CustomerNotes = table.Column<string>(nullable: true),
+                    ServicedBefore = table.Column<bool>(nullable: false),
+                    PreferredAppointmentDate = table.Column<DateTime>(nullable: false),
+                    ServiceStart = table.Column<DateTime>(nullable: false),
+                    ServiceEnd = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PendingAppointments", x => x.PendingAppointmentId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RuleSets",
                 columns: table => new
                 {
@@ -80,10 +109,10 @@ namespace Capstone.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Customers",
+                name: "Clients",
                 columns: table => new
                 {
-                    CustomerId = table.Column<int>(nullable: false)
+                    ClientId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FirstName = table.Column<string>(nullable: true),
                     LastName = table.Column<string>(nullable: true),
@@ -94,9 +123,9 @@ namespace Capstone.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Customers", x => x.CustomerId);
+                    table.PrimaryKey("PK_Clients", x => x.ClientId);
                     table.ForeignKey(
-                        name: "FK_Customers_Addresses_AddressId",
+                        name: "FK_Clients_Addresses_AddressId",
                         column: x => x.AddressId,
                         principalTable: "Addresses",
                         principalColumn: "AddressId",
@@ -237,8 +266,9 @@ namespace Capstone.Migrations
                 {
                     PianoId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CustomerId = table.Column<int>(nullable: false),
+                    ClientId = table.Column<int>(nullable: false),
                     Make = table.Column<string>(nullable: true),
+                    Configuration = table.Column<string>(nullable: true),
                     Model = table.Column<string>(nullable: true),
                     LastService = table.Column<DateTime>(nullable: true),
                     TechnicianNotes = table.Column<string>(nullable: true)
@@ -247,10 +277,10 @@ namespace Capstone.Migrations
                 {
                     table.PrimaryKey("PK_Pianos", x => x.PianoId);
                     table.ForeignKey(
-                        name: "FK_Pianos_Customers_CustomerId",
-                        column: x => x.CustomerId,
-                        principalTable: "Customers",
-                        principalColumn: "CustomerId",
+                        name: "FK_Pianos_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Clients",
+                        principalColumn: "ClientId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -282,7 +312,7 @@ namespace Capstone.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "95ee9147-b541-40d4-9a7a-e93dbbdcec01", "5d57cc0b-2bd4-4752-a6cc-25431719936e", "Admin", "ADMIN" });
+                values: new object[] { "64fdb72d-7421-46cb-9e84-31cf75fbd8b0", "95fe3a53-242d-4a04-b85e-8d4a0b43194a", "Admin", "ADMIN" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AppointmentBlocks_RuleSetId",
@@ -334,14 +364,14 @@ namespace Capstone.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Customers_AddressId",
-                table: "Customers",
+                name: "IX_Clients_AddressId",
+                table: "Clients",
                 column: "AddressId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Pianos_CustomerId",
+                name: "IX_Pianos_ClientId",
                 table: "Pianos",
-                column: "CustomerId");
+                column: "ClientId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -368,6 +398,9 @@ namespace Capstone.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "PendingAppointments");
+
+            migrationBuilder.DropTable(
                 name: "RuleSets");
 
             migrationBuilder.DropTable(
@@ -380,7 +413,7 @@ namespace Capstone.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Customers");
+                name: "Clients");
 
             migrationBuilder.DropTable(
                 name: "Addresses");

@@ -13,7 +13,8 @@ namespace Capstone.Data
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<AppointmentBlock> AppointmentBlocks { get; set; }
-        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Client> Clients { get; set; }
+        public DbSet<PendingAppointment> PendingAppointments { get; set; }
         public DbSet<Piano> Pianos { get; set; }
         public DbSet<RuleSet> RuleSets { get; set; }
 

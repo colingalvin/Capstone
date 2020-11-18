@@ -110,9 +110,9 @@ namespace Capstone.Migrations
                     b.ToTable("AppointmentBlocks");
                 });
 
-            modelBuilder.Entity("Capstone.Models.Customer", b =>
+            modelBuilder.Entity("Capstone.Models.Client", b =>
                 {
-                    b.Property<int>("CustomerId")
+                    b.Property<int>("ClientId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -135,11 +135,74 @@ namespace Capstone.Migrations
                     b.Property<string>("TechnicianNotes")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("CustomerId");
+                    b.HasKey("ClientId");
 
                     b.HasIndex("AddressId");
 
-                    b.ToTable("Customers");
+                    b.ToTable("Clients");
+                });
+
+            modelBuilder.Entity("Capstone.Models.PendingAppointment", b =>
+                {
+                    b.Property<int>("PendingAppointmentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EstimatedDuration")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IncludedServices")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PianoConfiguration")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PianoMake")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("PreferredAppointmentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ServiceEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ServiceStart")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("ServicedBefore")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("State")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StreetAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ZipCode")
+                        .HasColumnType("int");
+
+                    b.HasKey("PendingAppointmentId");
+
+                    b.ToTable("PendingAppointments");
                 });
 
             modelBuilder.Entity("Capstone.Models.Piano", b =>
@@ -149,8 +212,11 @@ namespace Capstone.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CustomerId")
+                    b.Property<int>("ClientId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Configuration")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("LastService")
                         .HasColumnType("datetime2");
@@ -166,7 +232,7 @@ namespace Capstone.Migrations
 
                     b.HasKey("PianoId");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("ClientId");
 
                     b.ToTable("Pianos");
                 });
@@ -221,8 +287,8 @@ namespace Capstone.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "95ee9147-b541-40d4-9a7a-e93dbbdcec01",
-                            ConcurrencyStamp = "5d57cc0b-2bd4-4752-a6cc-25431719936e",
+                            Id = "64fdb72d-7421-46cb-9e84-31cf75fbd8b0",
+                            ConcurrencyStamp = "95fe3a53-242d-4a04-b85e-8d4a0b43194a",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -415,7 +481,7 @@ namespace Capstone.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Capstone.Models.Customer", b =>
+            modelBuilder.Entity("Capstone.Models.Client", b =>
                 {
                     b.HasOne("Capstone.Models.Address", "Address")
                         .WithMany()
@@ -426,9 +492,9 @@ namespace Capstone.Migrations
 
             modelBuilder.Entity("Capstone.Models.Piano", b =>
                 {
-                    b.HasOne("Capstone.Models.Customer", "Customer")
+                    b.HasOne("Capstone.Models.Client", "Client")
                         .WithMany()
-                        .HasForeignKey("CustomerId")
+                        .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

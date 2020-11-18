@@ -12,10 +12,11 @@ namespace Capstone.Models
         [Key]
         public int PianoId { get; set; }
 
-        [ForeignKey("CustomerId")]
-        public int CustomerId { get; set; }
-        public Customer Customer { get; set; }
+        [ForeignKey("ClientId")]
+        public int ClientId { get; set; }
+        public Client Client { get; set; }
         public string Make { get; set; }
+        public string Configuration { get; set; }
         public string Model { get; set; }
 
         [Display(Name = "Date of Last Service")]
