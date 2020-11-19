@@ -70,7 +70,7 @@
                 @foreach (var service in PianoServices.Services)
                 {
                     <br />
-                    <input class="form-check-input" type="checkbox" value=@service.Value id="defaultCheck1">
+                    <input name="IncludedServices" type="checkbox" value="@service.Value" id="defaultCheck1">
                     <label class="form-check-label" for="defaultCheck1">
                         @service.Text
                     </label>

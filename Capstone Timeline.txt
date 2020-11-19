@@ -9,13 +9,14 @@ Day 2 - 11/18/20
 	-Test API calls in Postman
 		-Google directions for travel time component
 	-Wireframe with relevant bootstrap components included
-	-Review data repository design pattern
-
-Day 3 - 11/19/20
-	-Finish reviewing data repository design pattern
 	-Set up ASP.NET application w/ roles
 	-Create necessary pages as per wireframe and ensure proper navigation based on role (anonymous user v. admin)
+	-Begin functionality for submitting appointment request
 
+Day 3 - 11/19/20
+	-Add functionality for setting appointment rule sets
+	-Populate available 
+	
 Day 4 - 11/20/20
 
 Saturday - 11/21/20
@@ -45,7 +46,11 @@ Day 9 - 12/1/20
 Day 10 - 12/2/20
 	-Presentation!
 
+Data Repository Design Pattern
+
+
 
 Things to fix:
 -ASP.NET redirecting to login page after trying to access admin controller without proper credentials
 -ERD - remove CustomerId FK reference from Appointments table
+-Fix appointment services

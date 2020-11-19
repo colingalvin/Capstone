@@ -41,10 +41,13 @@ namespace Capstone.Controllers
             return View();
         }
 
+        [BindProperty]
+        public List<string> IncludedServices { get; set; }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult ScheduleService(PendingAppointment pendingAppointment)
         {
+            pendingAppointment.IncludedServices = string.Join(", ", IncludedServices.ToArray());
             _context.PendingAppointments.Add(pendingAppointment);
             _context.SaveChanges();
             return RedirectToAction("ConfirmRequest", pendingAppointment);

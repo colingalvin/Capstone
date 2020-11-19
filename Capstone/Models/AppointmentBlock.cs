@@ -16,12 +16,7 @@ namespace Capstone.Models
         public string DayOfWeek { get; set; }
 
         [Display(Name = "Start Time")]
-        [DataType(DataType.Time)]
-        public DateTime StartTime { get; set; }
-
-        [Display(Name = "End Time")]
-        [DataType(DataType.Time)]
-        public DateTime EndTime { get; set; }
+        public string StartTime { get; set; }
 
         [ForeignKey("RuleSet")]
         public int RuleSetId { get; set; }

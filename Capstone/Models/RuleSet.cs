@@ -18,6 +18,8 @@ namespace Capstone.Models
         [Display(Name = "End Date")]
         [DataType(DataType.Date)]
         public DateTime? EndDate { get; set; }
+
+        [Display(Name = "Default?")]
         public bool Default { get; set; }
     }
 }
