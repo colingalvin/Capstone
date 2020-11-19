@@ -16,6 +16,8 @@ namespace Capstone.Models
         public int PianoId { get; set; }
         public Piano Piano { get; set; }
 
+        public string IncludedServices { get; set; }
+
         [Display(Name = "Customer Notes")]
         public string CustomerNotes { get; set; }
 
@@ -27,9 +29,6 @@ namespace Capstone.Models
 
         [Display(Name = "Appointment End")]
         public DateTime ServiceEnd { get; set; }
-
-        [Display(Name = "Approval Status")]
-        public bool? ApprovalStatus { get; set; }
 
         [Display(Name = "Completed?")]
         public bool IsComplete { get; set; }

@@ -2,3 +2,10 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
+
+function populateMap(event) {
+    $("#address").append(
+        "<h2>Populate Map</h2>"
+    );
+    event.preventDefault();
+}

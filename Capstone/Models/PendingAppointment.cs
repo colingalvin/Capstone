@@ -35,6 +35,8 @@ namespace Capstone.Models
 
         [Display(Name = "Choose Services")]
         public string IncludedServices { get; set; }
+
+        [Display(Name = "Estimated Duration")]
         public int EstimatedDuration { get; set; }
 
         [Display(Name = "Please enter any additional notes concerning this service:")]
@@ -48,6 +50,7 @@ namespace Capstone.Models
         public DateTime PreferredAppointmentDate { get; set; }
 
         [Display(Name = "Appointment Start")]
+
         public DateTime ServiceStart { get; set; }
 
         [Display(Name = "Appointment End")]

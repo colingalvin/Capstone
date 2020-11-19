@@ -14,8 +14,7 @@ Day 2 - 11/18/20
 	-Begin functionality for submitting appointment request
 
 Day 3 - 11/19/20
-	-Add functionality for setting appointment rule sets
-	-Populate available 
+	-Add functionality for confirming pending appoitments and adding info to database
 	
 Day 4 - 11/20/20
 

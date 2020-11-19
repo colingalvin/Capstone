@@ -1,11 +1,95 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<Capstone.Models.PendingAppointment>
+
+@{
+    ViewData["Title"] = "Pending Appointments";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome to Punkin's Secret Admin Page</h1>
-    <p>
-        <span style="color: red">This page should only be visible to someone logged in as an administrator!</span><br /><br />
-        This page will serve as the landing page when logging in, and contain links for all current features and actions.
-    </p>
-</div>
+<h1>Pending Appointments</h1>
+
+<p>
+    <a asp-action="Create">Create New Appointment?</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StreetAddress)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.City)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PianoMake)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PianoConfiguration)
+            </th>
+            <th>
+                @Html.DisplayName("Services")
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ServiceStart)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EstimatedDuration)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StreetAddress)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.City)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PianoMake)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PianoConfiguration)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IncludedServices)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ServiceStart)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EstimatedDuration)
+                </td>
+                <td>
+                    <a asp-action="PendingAppointmentDetails" asp-route-id="@item.PendingAppointmentId">View Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h1>Today's Appointments</h1>
+@foreach (var appointment in (dynamic)ViewData["TodaysAppointments"])
+{
+    <p>@appointment.ServiceStart - @appointment.CustomerNotes</p>
+}
+
+<h1>Upcoming Appointments</h1>
+@foreach (var appointment in (dynamic)ViewData["UpcomingAppointments"])
+{
+    <p>@appointment.ServiceStart - @appointment.CustomerNotes</p>
+}

@@ -1,0 +1,126 @@
+﻿@model Capstone.ViewModels.CreateNewAppointmentViewModel
+
+<h1>Confirm Appointment Details</h1>
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="CreateAppointment">
+
+            <div asp-validation-summary="All"></div>
+
+            <input type="hidden" asp-for="PendingAppoitmentId" />
+            <input type="hidden" asp-for="Latitude" />
+            <input type="hidden" asp-for="Longitude" />
+
+            @if (ViewBag.matchingClients == null)
+            {
+                <input type="hidden" asp-for="ClientId" />
+            }
+            else
+            {
+                <div class="form-group">
+                    <select asp-for="ClientId" asp-items="@(new SelectList(ViewBag.matchingClients, "ClientId", "FirstName"))">
+                        <option value="">Leave unselected to create new client</option>
+                    </select>
+                    <span asp-validation-for="ClientId" class="text-danger"></span>
+                </div>
+
+                @*<p>Match to existing client record:</p>
+            @Html.DropDownList("Clients", new SelectList(ViewBag.matchingClients, "ClientId", "FirstName"));
+                *@
+            }
+            @if (ViewBag.matchingPianos == null)
+            {
+                <input type="hidden" asp-for="PianoId" />
+            }
+            else
+            {
+                <div class="form-group">
+                    <select asp-for="PianoId" asp-items="@(new SelectList(ViewBag.matchingPianos, "PianoId", "Make"))">
+                        <option value="">Leave unselected to create new piano</option>
+                    </select>
+                    <span asp-validation-for="PianoId" class="text-danger"></span>
+                </div>
+
+                @*<p>Match to existing client record:</p>
+            @Html.DropDownList("Clients", new SelectList(ViewBag.matchingClients, "ClientId", "FirstName"));
+                *@
+            }
+
+
+            <div class="form-group">
+                <label asp-for="Make" class="control-label"></label>
+                <input asp-for="Make" class="form-control" />
+                <span asp-validation-for="Make" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Configuration" class="control-label"></label>
+                <input asp-for="Configuration" class="form-control" />
+                <span asp-validation-for="Configuration" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FirstName" class="control-label"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName" class="control-label"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Phone" class="control-label"></label>
+                <input asp-for="Phone" class="form-control" />
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StreetAddress" class="control-label"></label>
+                <input asp-for="StreetAddress" class="form-control" />
+                <span asp-validation-for="StreetAddress" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="City" class="control-label"></label>
+                <input asp-for="City" class="form-control" />
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="State" class="control-label"></label>
+                <input asp-for="State" class="form-control" />
+                <span asp-validation-for="State" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ZipCode" class="control-label"></label>
+                <input asp-for="ZipCode" class="form-control" />
+                <span asp-validation-for="ZipCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IncludedServices" class="control-label"></label>
+                <input asp-for="IncludedServices" class="form-control" />
+                <span asp-validation-for="IncludedServices" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CustomerNotes" class="control-label"></label>
+                <input asp-for="CustomerNotes" class="form-control" />
+                <span asp-validation-for="CustomerNotes" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ServiceStart" class="control-label"></label>
+                <input asp-for="ServiceStart" class="form-control" />
+                <span asp-validation-for="ServiceStart" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ServiceEnd" class="control-label"></label>
+                <input asp-for="ServiceEnd" class="form-control" />
+                <span asp-validation-for="ServiceEnd" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create Appointment" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+    
+</div>
