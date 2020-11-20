@@ -1,0 +1,52 @@
+﻿@model Capstone.Models.PendingAppointment
+@{
+    ViewData["Title"] = "ChooseAppointmentTime";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Choose Appointment Time</h1>
+
+<form asp-action="ConfirmRequest">
+    <input type="hidden" asp-for="PendingAppointmentId" />
+    <input type="hidden" asp-for="FirstName" />
+    <input type="hidden" asp-for="LastName" />
+    <input type="hidden" asp-for="Email" />
+    <input type="hidden" asp-for="Phone" />
+    <input type="hidden" asp-for="StreetAddress" />
+    <input type="hidden" asp-for="City" />
+    <input type="hidden" asp-for="State" />
+    <input type="hidden" asp-for="ZipCode" />
+    <input type="hidden" asp-for="Latitude" />
+    <input type="hidden" asp-for="Longitude" />
+    <input type="hidden" asp-for="PianoMake" />
+    <input type="hidden" asp-for="PianoConfiguration" />
+    <input type="hidden" asp-for="IncludedServices" />
+    <input type="hidden" asp-for="EstimatedDuration" />
+    <input type="hidden" asp-for="CustomerNotes" />
+    <input type="hidden" asp-for="ServicedBefore" />
+    <input type="hidden" asp-for="PreferredAppointmentDate" />
+    <input type="hidden" asp-for="ServiceStart" />
+    <input type="hidden" asp-for="ServiceEnd" />
+
+
+    <h3>Confirm appointment details:</h3>
+    <p>Name: @Model.FirstName @Model.LastName</p>
+    <p>Email: @Model.Email</p>
+    <p>Phone: @Model.Phone</p>
+    <p>Address:
+    <p>@Model.StreetAddress</p>
+    <p>@Model.City, @Model.State  @Model.ZipCode</p>
+    <p>Insert Google Map here</p>
+    </p>
+    <p>Piano: @Model.PianoMake @Model.PianoConfiguration</p>
+    <p>Included Services: @Model.IncludedServices</p>
+    <p>Estimated Duration: @Model.EstimatedDuration min.</p>
+    <p>Notes: @Model.CustomerNotes</p>
+    <p>Available Appointments:</p>
+    <input type="radio">Available Appointment #1<br />
+    <input type="radio">Available Appointment #2<br />
+    <input type="radio">Available Appointment #3
+    <div class="form-group">
+        <input type="submit" value="Submit Service Request" class="btn btn-primary" />
+    </div>
+</form>

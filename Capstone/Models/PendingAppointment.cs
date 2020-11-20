@@ -27,6 +27,9 @@ namespace Capstone.Models
         [Display(Name = "Zip Code")]
         public int ZipCode { get; set; }
 
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+
         [Display(Name = "Piano Brand")]
         public string PianoMake { get; set; }
 

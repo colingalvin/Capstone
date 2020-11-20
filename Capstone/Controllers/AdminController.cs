@@ -36,33 +36,104 @@ namespace Capstone.Controllers
             return View();
         }
 
-        public ActionResult CreateRuleSet()
+        public ActionResult EditRuleSet(int? id)
         {
-            return View();
+            CreateNewRuleSetViewModel ruleSet;
+            if (id != null)
+            {
+                RuleSet existingRuleSet = _context.RuleSets.Where(rs => rs.RuleSetId == id).SingleOrDefault();
+                List<AppointmentBlock> existingBlocks = _context.AppointmentBlocks.Where(ab => ab.RuleSetId == existingRuleSet.RuleSetId).ToList();
+                List<string> days = new List<string>();
+                foreach(var block in existingBlocks)
+                    {
+                        days.Add(block.Day.ToString());
+                    };
+                ruleSet = new CreateNewRuleSetViewModel()
+                {
+                    RuleSetId = existingRuleSet.RuleSetId,
+                    StartDate = existingRuleSet.StartDate,
+                    EndDate = existingRuleSet.EndDate,
+                    Default = existingRuleSet.Default,
+                    Days = days,
+                    StartTime = existingBlocks[0].StartTime,
+                    EndTime = existingBlocks[0].EndTime
+                };
+            }
+            else
+            {
+                ruleSet = new CreateNewRuleSetViewModel();
+            }
+            return View(ruleSet);
         }
 
-        [BindProperty]
-        public List<string> Days { get; set; }
-        [BindProperty]
-        public List<string> Times { get; set; }
+        //[BindProperty]
+        //public List<string> Days { get; set; }
+        //[BindProperty]
+        //public List<string> Times { get; set; }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CreateRuleSet(RuleSet ruleSet)
+        public ActionResult CreateRuleSet(CreateNewRuleSetViewModel ruleSet)
         {
-            _context.RuleSets.Add(ruleSet);
-            _context.SaveChanges();
-
-            foreach (string day in Days)
+            if (ruleSet.RuleSetId == 0)
             {
-                foreach (string time in Times)
+                // Create new rule set
+                RuleSet newRuleSet = new RuleSet()
                 {
-                    AppointmentBlock appointmentBlock = new AppointmentBlock { DayOfWeek = day, StartTime = time, RuleSet = _context.RuleSets.Where(rs => rs.RuleSetId == ruleSet.RuleSetId).SingleOrDefault(), RuleSetId = ruleSet.RuleSetId };
+                    StartDate = ruleSet.StartDate,
+                    EndDate = ruleSet.EndDate,
+                    Default = ruleSet.Default
+                };
+                _context.RuleSets.Add(newRuleSet);
+                _context.SaveChanges();
+
+                // Create new appointment blocks
+                foreach (string day in ruleSet.Days)
+                {
+                    AppointmentBlock appointmentBlock = new AppointmentBlock()
+                    {
+                        Day = day.ToString(),
+                        StartTime = ruleSet.StartTime,
+                        EndTime = ruleSet.EndTime,
+                        RuleSetId = newRuleSet.RuleSetId,
+                        RuleSet = newRuleSet
+                    };
                     _context.AppointmentBlocks.Add(appointmentBlock);
                 }
+                _context.SaveChanges();
             }
-            _context.SaveChanges();
+            else
+            {
+                // Update/save changes to existing rule set
+                RuleSet existingRuleSet = _context.RuleSets.Where(rs => rs.RuleSetId == ruleSet.RuleSetId).SingleOrDefault();
+                existingRuleSet.StartDate = ruleSet.StartDate;
+                existingRuleSet.EndDate = ruleSet.EndDate;
+                existingRuleSet.Default = ruleSet.Default;
+                _context.RuleSets.Update(existingRuleSet);
 
-            return View();
+                // Delete all appointment blocks associated with rule set id
+                List<AppointmentBlock> blocks = _context.AppointmentBlocks.Include(ab => ab.RuleSet == existingRuleSet).Where(ab => ab.RuleSetId == existingRuleSet.RuleSetId).ToList();
+                foreach(AppointmentBlock block in blocks)
+                {
+                    _context.AppointmentBlocks.Remove(block);
+                }
+                _context.SaveChanges();
+
+                // Create new appointment blocks associated with rule set id
+                foreach (string day in ruleSet.Days)
+                {
+                    AppointmentBlock appointmentBlock = new AppointmentBlock()
+                    {
+                        Day = day,
+                        StartTime = ruleSet.StartTime,
+                        EndTime = ruleSet.EndTime,
+                        RuleSetId = existingRuleSet.RuleSetId,
+                        RuleSet = existingRuleSet
+                    };
+                    _context.AppointmentBlocks.Add(appointmentBlock);
+                }
+                _context.SaveChanges();
+            }
+            return RedirectToAction("ViewRuleSets");
         }
 
         public ActionResult ViewRuleSets()
@@ -76,7 +147,7 @@ namespace Capstone.Controllers
             var appointment = _context.PendingAppointments.Where(pa => pa.PendingAppointmentId == id).SingleOrDefault();
 
             CreateNewAppointmentViewModel model = new CreateNewAppointmentViewModel() {
-                PendingAppoitmentId = id,
+                PendingAppointmentId = id,
                 Make = appointment.PianoMake,
                 Configuration = appointment.PianoConfiguration,
                 FirstName = appointment.FirstName,
@@ -175,7 +246,7 @@ namespace Capstone.Controllers
             };
 
             _context.Appointments.Add(appointment);
-            _context.PendingAppointments.Remove(_context.PendingAppointments.Where(pa => pa.PendingAppointmentId == model.PendingAppoitmentId).SingleOrDefault());
+            _context.PendingAppointments.Remove(_context.PendingAppointments.Where(pa => pa.PendingAppointmentId == model.PendingAppointmentId).SingleOrDefault());
             _context.SaveChanges();
             return RedirectToAction("Index");
         }

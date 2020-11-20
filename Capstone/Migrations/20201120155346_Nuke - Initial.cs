@@ -244,7 +244,7 @@ namespace Capstone.Migrations
                 {
                     AppointmentBlockId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DayOfWeek = table.Column<string>(nullable: true),
+                    Day = table.Column<string>(nullable: true),
                     StartTime = table.Column<DateTime>(nullable: false),
                     EndTime = table.Column<DateTime>(nullable: false),
                     RuleSetId = table.Column<int>(nullable: false)
@@ -291,11 +291,11 @@ namespace Capstone.Migrations
                     AppointmentId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PianoId = table.Column<int>(nullable: false),
+                    IncludedServices = table.Column<string>(nullable: true),
                     CustomerNotes = table.Column<string>(nullable: true),
                     TechnicianNotes = table.Column<string>(nullable: true),
                     ServiceStart = table.Column<DateTime>(nullable: false),
                     ServiceEnd = table.Column<DateTime>(nullable: false),
-                    ApprovalStatus = table.Column<bool>(nullable: true),
                     IsComplete = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
@@ -312,7 +312,7 @@ namespace Capstone.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "64fdb72d-7421-46cb-9e84-31cf75fbd8b0", "95fe3a53-242d-4a04-b85e-8d4a0b43194a", "Admin", "ADMIN" });
+                values: new object[] { "43564cf0-7e62-4bf2-87a8-bb1d57aa0680", "773220a5-1114-46b3-8aa5-59272ab4ea64", "Admin", "ADMIN" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AppointmentBlocks_RuleSetId",

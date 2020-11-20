@@ -11,7 +11,12 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="ScheduleService">
+        <input type="hidden" asp-for="City" />
+        <input type="hidden" asp-for="State" />
+        <input type="hidden" asp-for="Latitude" />
+        <input type="hidden" asp-for="Longitude" />
+
+        <form asp-action="ChooseAppointmentTime">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="FirstName" class="control-label"></label>
@@ -39,16 +44,6 @@
                 <span asp-validation-for="StreetAddress" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="City" class="control-label"></label>
-                <input asp-for="City" class="form-control" />
-                <span asp-validation-for="City" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="State" class="control-label"></label>
-                <input asp-for="State" class="form-control" />
-                <span asp-validation-for="State" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="ZipCode" class="control-label"></label>
                 <input asp-for="ZipCode" class="form-control" />
                 <span asp-validation-for="ZipCode" class="text-danger"></span>
@@ -65,14 +60,33 @@
                 </select>
                 <span asp-validation-for="PianoConfiguration" class="text-danger"></span>
             </div>
-            <div class="form-check">
+            <div class="form-group">
                 <label asp-for="IncludedServices" class="control-label"></label>
-                @foreach (var service in PianoServices.Services)
+                <h4>Tuning Services:</h4>
+                @foreach (var service in PianoServices.TuningServices)
                 {
                     <br />
-                    <input name="IncludedServices" type="checkbox" value="@service.Value" id="@service.Value">
-                    <label class="form-check-label" for="@service.Value">
-                        @service.Text
+                    <input name="IncludedServices" type="radio" value="@service.Name" id="@service.Time">
+                    <label class="form-check-label" for="@service.Name">
+                        @service.Name
+                    </label>
+                }
+                <br /><h4>Repair Services:</h4>
+                @foreach (var service in PianoServices.RepairServices)
+                {
+                    <br />
+                    <input name="IncludedServices" type="checkbox" value="@service.Name" id="@service.Time">
+                    <label class="form-check-label" for="@service.Name">
+                        @service.Name
+                    </label>
+                }
+                <br /><h4>Cleaning Services:</h4>
+                @foreach (var service in PianoServices.CleaningServices)
+                {
+                    <br />
+                    <input name="IncludedServices" type="checkbox" value="@service.Name" id="@service.Time">
+                    <label class="form-check-label" for="@service.Name">
+                        @service.Name
                     </label>
                 }
                 <span asp-validation-for="IncludedServices" class="text-danger"></span>
@@ -93,7 +107,7 @@
                 <span asp-validation-for="PreferredAppointmentDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Submit Service Request" class="btn btn-primary" />
+                <input type="submit" value="Next" class="btn btn-primary" />
             </div>
         </form>
     </div>

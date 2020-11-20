@@ -13,10 +13,15 @@ namespace Capstone.Models
         public int AppointmentBlockId { get; set; }
 
         [Display(Name = "Day")]
-        public string DayOfWeek { get; set; }
+        public string Day { get; set; }
 
         [Display(Name = "Start Time")]
-        public string StartTime { get; set; }
+        [DataType(DataType.Time)]
+        public DateTime StartTime { get; set; }
+
+        [Display(Name = "End Time")]
+        [DataType(DataType.Time)]
+        public DateTime EndTime { get; set; }
 
         [ForeignKey("RuleSet")]
         public int RuleSetId { get; set; }

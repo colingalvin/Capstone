@@ -91,14 +91,17 @@ namespace Capstone.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("DayOfWeek")
+                    b.Property<string>("Day")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("RuleSetId")
                         .HasColumnType("int");
 
-                    b.Property<string>("StartTime")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("AppointmentBlockId");
 
@@ -284,8 +287,8 @@ namespace Capstone.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "3611a620-521a-48ef-ad08-b86c2cf2bb74",
-                            ConcurrencyStamp = "5def0275-d47c-46e1-a6b0-9a64d51f30c7",
+                            Id = "43564cf0-7e62-4bf2-87a8-bb1d57aa0680",
+                            ConcurrencyStamp = "773220a5-1114-46b3-8aa5-59272ab4ea64",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });

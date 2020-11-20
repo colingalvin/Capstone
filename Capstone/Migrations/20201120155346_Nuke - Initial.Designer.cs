@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Capstone.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201119150056_Tweaks")]
-    partial class Tweaks
+    [Migration("20201120155346_Nuke - Initial")]
+    partial class NukeInitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -58,10 +58,10 @@ namespace Capstone.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool?>("ApprovalStatus")
-                        .HasColumnType("bit");
-
                     b.Property<string>("CustomerNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IncludedServices")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsComplete")
@@ -93,14 +93,17 @@ namespace Capstone.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("DayOfWeek")
+                    b.Property<string>("Day")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("RuleSetId")
                         .HasColumnType("int");
 
-                    b.Property<string>("StartTime")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("AppointmentBlockId");
 
@@ -286,8 +289,8 @@ namespace Capstone.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a379bfb5-519c-42ad-a75b-fa8e17bf7d08",
-                            ConcurrencyStamp = "90ade048-5b81-434f-885b-01777d5bfa75",
+                            Id = "43564cf0-7e62-4bf2-87a8-bb1d57aa0680",
+                            ConcurrencyStamp = "773220a5-1114-46b3-8aa5-59272ab4ea64",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });

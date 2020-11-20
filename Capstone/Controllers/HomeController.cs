@@ -43,14 +43,47 @@ namespace Capstone.Controllers
 
         [BindProperty]
         public List<string> IncludedServices { get; set; }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult ScheduleService(PendingAppointment pendingAppointment)
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        public IActionResult ChooseAppointmentTime(PendingAppointment pendingAppointment)
         {
             pendingAppointment.IncludedServices = string.Join(", ", IncludedServices.ToArray());
-            _context.PendingAppointments.Add(pendingAppointment);
-            _context.SaveChanges();
-            return RedirectToAction("ConfirmRequest", pendingAppointment);
+            foreach(var includedService in IncludedServices)
+            {
+                foreach(var service in PianoServices.TuningServices)
+                {
+                    if (includedService == service.Name)
+                    {
+                        pendingAppointment.EstimatedDuration += service.Time;
+                        break;
+                    }
+                }
+                foreach(var service in PianoServices.RepairServices)
+                {
+                    if (includedService == service.Name)
+                    {
+                        pendingAppointment.EstimatedDuration += service.Time;
+                        break;
+                    }
+                }
+                foreach (var service in PianoServices.CleaningServices)
+                {
+                    if (includedService == service.Name)
+                    {
+                        pendingAppointment.EstimatedDuration += service.Time;
+                        break;
+                    }
+                }
+            }
+            // Geocode address
+            pendingAppointment.City = "O'Fallon";
+            pendingAppointment.State = "IL";
+            pendingAppointment.Latitude = 38.583220;
+            pendingAppointment.Longitude = -89.906720;
+
+            // Logic for checking database for available appointments
+            // Bind appointments to ViewBag
+            return View(pendingAppointment);
         }
 
         public IActionResult ConfirmRequest(PendingAppointment pendingAppointment)

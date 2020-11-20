@@ -9,7 +9,7 @@ namespace Capstone.ViewModels
     public class CreateNewAppointmentViewModel
     {
         // Track pending appointment id
-        public int PendingAppoitmentId { get; set; }
+        public int PendingAppointmentId { get; set; }
 
         // Necessary Piano Details
         public int PianoId { get; set; }
