@@ -75,12 +75,40 @@ namespace Capstone.Controllers
                     }
                 }
             }
+
             // Geocode address
             pendingAppointment.City = "O'Fallon";
             pendingAppointment.State = "IL";
             pendingAppointment.Latitude = 38.583220;
             pendingAppointment.Longitude = -89.906720;
 
+            // Find all existing appointments for preferred appointment date
+            List<Appointment> existingAppointments = _context.Appointments.Where(a => a.ServiceStart.Date == pendingAppointment.PreferredAppointmentDate).ToList();
+            
+            // Find relevant rule set
+            var currentRuleSet = _context.RuleSets.Where(rs => rs.StartDate <= pendingAppointment.PreferredAppointmentDate.Date).OrderByDescending(rs => rs.StartDate).FirstOrDefault();
+
+            // Find appointment block in current rule set for correct day of week
+            var appointmentBlock = _context.AppointmentBlocks.Where(ab => (ab.RuleSetId == currentRuleSet.RuleSetId) && (ab.Day == pendingAppointment.PreferredAppointmentDate.DayOfWeek)).SingleOrDefault();
+
+            // If no appointments exist for that day
+            // Check that appointments offered on that day
+
+            // Create appointment option based on appointment start time for that day
+            List<DateTime> availableAppointments = new List<DateTime>()
+            {
+                new DateTime(
+                        pendingAppointment.PreferredAppointmentDate.Year,
+                        pendingAppointment.PreferredAppointmentDate.Month,
+                        pendingAppointment.PreferredAppointmentDate.Day,
+                        appointmentBlock.StartTime.Hour,
+                        appointmentBlock.StartTime.Minute,
+                        appointmentBlock.StartTime.Second
+                        )
+            };
+
+            ViewBag.availableAppointments = availableAppointments;
+            
             // Logic for checking database for available appointments
             // Bind appointments to ViewBag
             return View(pendingAppointment);
@@ -88,6 +116,9 @@ namespace Capstone.Controllers
 
         public IActionResult ConfirmRequest(PendingAppointment pendingAppointment)
         {
+            TimeSpan duration = new TimeSpan(0, pendingAppointment.EstimatedDuration, 0);
+            pendingAppointment.ServiceEnd = pendingAppointment.ServiceStart + duration;
+
             return View(pendingAppointment);
         }
 

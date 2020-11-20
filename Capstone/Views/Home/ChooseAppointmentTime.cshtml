@@ -25,7 +25,7 @@
     <input type="hidden" asp-for="CustomerNotes" />
     <input type="hidden" asp-for="ServicedBefore" />
     <input type="hidden" asp-for="PreferredAppointmentDate" />
-    <input type="hidden" asp-for="ServiceStart" />
+    @*<input type="hidden" asp-for="ServiceStart" />*@
     <input type="hidden" asp-for="ServiceEnd" />
 
 
@@ -43,9 +43,11 @@
     <p>Estimated Duration: @Model.EstimatedDuration min.</p>
     <p>Notes: @Model.CustomerNotes</p>
     <p>Available Appointments:</p>
-    <input type="radio">Available Appointment #1<br />
-    <input type="radio">Available Appointment #2<br />
-    <input type="radio">Available Appointment #3
+    @foreach (var item in ViewBag.availableAppointments)
+    {
+        <input asp-for="ServiceStart" value="@item" type="radio">@item.ToString("ddd, MMM hh:mm tt")<br />
+    }
+
     <div class="form-group">
         <input type="submit" value="Submit Service Request" class="btn btn-primary" />
     </div>

@@ -17,7 +17,7 @@ namespace Capstone.ViewModels
         public DateTime? EndDate { get; set; }
         public bool Default { get; set; }
 
-        public List<string> Days { get; set; }
+        public List<DayOfWeek> Days { get; set; }
 
         [DataType(DataType.Time)]
         public DateTime StartTime { get; set; }

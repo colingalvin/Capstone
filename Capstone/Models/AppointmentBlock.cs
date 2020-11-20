@@ -13,7 +13,7 @@ namespace Capstone.Models
         public int AppointmentBlockId { get; set; }
 
         [Display(Name = "Day")]
-        public string Day { get; set; }
+        public DayOfWeek Day { get; set; }
 
         [Display(Name = "Start Time")]
         [DataType(DataType.Time)]

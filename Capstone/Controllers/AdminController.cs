@@ -43,10 +43,10 @@ namespace Capstone.Controllers
             {
                 RuleSet existingRuleSet = _context.RuleSets.Where(rs => rs.RuleSetId == id).SingleOrDefault();
                 List<AppointmentBlock> existingBlocks = _context.AppointmentBlocks.Where(ab => ab.RuleSetId == existingRuleSet.RuleSetId).ToList();
-                List<string> days = new List<string>();
+                List<DayOfWeek> days = new List<DayOfWeek>();
                 foreach(var block in existingBlocks)
                     {
-                        days.Add(block.Day.ToString());
+                        days.Add(block.Day);
                     };
                 ruleSet = new CreateNewRuleSetViewModel()
                 {
@@ -87,11 +87,11 @@ namespace Capstone.Controllers
                 _context.SaveChanges();
 
                 // Create new appointment blocks
-                foreach (string day in ruleSet.Days)
+                foreach (var day in ruleSet.Days)
                 {
                     AppointmentBlock appointmentBlock = new AppointmentBlock()
                     {
-                        Day = day.ToString(),
+                        Day = day,
                         StartTime = ruleSet.StartTime,
                         EndTime = ruleSet.EndTime,
                         RuleSetId = newRuleSet.RuleSetId,
@@ -119,7 +119,7 @@ namespace Capstone.Controllers
                 _context.SaveChanges();
 
                 // Create new appointment blocks associated with rule set id
-                foreach (string day in ruleSet.Days)
+                foreach (DayOfWeek day in ruleSet.Days)
                 {
                     AppointmentBlock appointmentBlock = new AppointmentBlock()
                     {
