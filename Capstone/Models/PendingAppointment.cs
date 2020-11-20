@@ -17,6 +17,8 @@ namespace Capstone.Models
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
         public string Email { get; set; }
+        
+        [DisplayFormat(DataFormatString = "{0:(###)###-####}")]
         public string Phone { get; set; }
 
         [Display(Name = "Street Address")]
@@ -25,8 +27,7 @@ namespace Capstone.Models
         public string State { get; set; }
 
         [Display(Name = "Zip Code")]
-        public int ZipCode { get; set; }
-
+        public int Zip { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
 
@@ -46,10 +47,10 @@ namespace Capstone.Models
         public string CustomerNotes { get; set; }
 
         [Display(Name = "Has this piano been serviced by WMS before?")]
-        public bool ServicedBefore { get; set; }
+        public bool? ServicedBefore { get; set; }
 
-        [DataType(DataType.Date)]
         [Display(Name = "Preferred Appointment Date")]
+        [DataType(DataType.Date)]
         public DateTime PreferredAppointmentDate { get; set; }
 
         [Display(Name = "Appointment Start")]

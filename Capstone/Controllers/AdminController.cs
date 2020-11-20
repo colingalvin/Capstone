@@ -157,7 +157,7 @@ namespace Capstone.Controllers
                 StreetAddress = appointment.StreetAddress,
                 City = appointment.City,
                 State = appointment.State,
-                ZipCode = appointment.ZipCode,
+                Zip = appointment.Zip,
                 IncludedServices = appointment.IncludedServices,
                 CustomerNotes = appointment.CustomerNotes,
                 ServiceStart = appointment.ServiceStart,
@@ -195,7 +195,7 @@ namespace Capstone.Controllers
                             StreetAddress = model.StreetAddress,
                             City = model.City,
                             State = model.State,
-                            ZipCode = model.ZipCode
+                            Zip = model.Zip
                             // Geocode Address
                         };
                         _context.Addresses.Add(address);

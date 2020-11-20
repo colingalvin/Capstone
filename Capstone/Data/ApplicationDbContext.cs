@@ -17,6 +17,7 @@ namespace Capstone.Data
         public DbSet<PendingAppointment> PendingAppointments { get; set; }
         public DbSet<Piano> Pianos { get; set; }
         public DbSet<RuleSet> RuleSets { get; set; }
+        public DbSet<DefaultTime> DefaultTimes { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)

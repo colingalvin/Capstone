@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Capstone.Migrations
 {
-    public partial class NukeInitial : Migration
+    public partial class Nukeinitial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -16,7 +16,7 @@ namespace Capstone.Migrations
                     StreetAddress = table.Column<string>(nullable: true),
                     City = table.Column<string>(nullable: true),
                     State = table.Column<string>(nullable: true),
-                    ZipCode = table.Column<int>(nullable: false),
+                    Zip = table.Column<int>(nullable: false),
                     Latitude = table.Column<double>(nullable: false),
                     Longitude = table.Column<double>(nullable: false)
                 },
@@ -77,13 +77,15 @@ namespace Capstone.Migrations
                     StreetAddress = table.Column<string>(nullable: true),
                     City = table.Column<string>(nullable: true),
                     State = table.Column<string>(nullable: true),
-                    ZipCode = table.Column<int>(nullable: false),
+                    Zip = table.Column<int>(nullable: false),
+                    Latitude = table.Column<double>(nullable: false),
+                    Longitude = table.Column<double>(nullable: false),
                     PianoMake = table.Column<string>(nullable: true),
                     PianoConfiguration = table.Column<string>(nullable: true),
                     IncludedServices = table.Column<string>(nullable: true),
                     EstimatedDuration = table.Column<int>(nullable: false),
                     CustomerNotes = table.Column<string>(nullable: true),
-                    ServicedBefore = table.Column<bool>(nullable: false),
+                    ServicedBefore = table.Column<bool>(nullable: true),
                     PreferredAppointmentDate = table.Column<DateTime>(nullable: false),
                     ServiceStart = table.Column<DateTime>(nullable: false),
                     ServiceEnd = table.Column<DateTime>(nullable: false)
@@ -244,7 +246,7 @@ namespace Capstone.Migrations
                 {
                     AppointmentBlockId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Day = table.Column<string>(nullable: true),
+                    Day = table.Column<int>(nullable: false),
                     StartTime = table.Column<DateTime>(nullable: false),
                     EndTime = table.Column<DateTime>(nullable: false),
                     RuleSetId = table.Column<int>(nullable: false)
@@ -254,6 +256,26 @@ namespace Capstone.Migrations
                     table.PrimaryKey("PK_AppointmentBlocks", x => x.AppointmentBlockId);
                     table.ForeignKey(
                         name: "FK_AppointmentBlocks_RuleSets_RuleSetId",
+                        column: x => x.RuleSetId,
+                        principalTable: "RuleSets",
+                        principalColumn: "RuleSetId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DefaultTimes",
+                columns: table => new
+                {
+                    DefaultTimeId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StartTime = table.Column<DateTime>(nullable: false),
+                    RuleSetId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DefaultTimes", x => x.DefaultTimeId);
+                    table.ForeignKey(
+                        name: "FK_DefaultTimes_RuleSets_RuleSetId",
                         column: x => x.RuleSetId,
                         principalTable: "RuleSets",
                         principalColumn: "RuleSetId",
@@ -312,7 +334,7 @@ namespace Capstone.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "43564cf0-7e62-4bf2-87a8-bb1d57aa0680", "773220a5-1114-46b3-8aa5-59272ab4ea64", "Admin", "ADMIN" });
+                values: new object[] { "ac40f054-0eb6-4f28-9aa7-52bf4f5bfd28", "a2be2ce6-ff2b-47e9-82bf-7d5238be499b", "Admin", "ADMIN" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AppointmentBlocks_RuleSetId",
@@ -369,6 +391,11 @@ namespace Capstone.Migrations
                 column: "AddressId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_DefaultTimes_RuleSetId",
+                table: "DefaultTimes",
+                column: "RuleSetId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Pianos_ClientId",
                 table: "Pianos",
                 column: "ClientId");
@@ -398,10 +425,10 @@ namespace Capstone.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "PendingAppointments");
+                name: "DefaultTimes");
 
             migrationBuilder.DropTable(
-                name: "RuleSets");
+                name: "PendingAppointments");
 
             migrationBuilder.DropTable(
                 name: "Pianos");
@@ -411,6 +438,9 @@ namespace Capstone.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "RuleSets");
 
             migrationBuilder.DropTable(
                 name: "Clients");

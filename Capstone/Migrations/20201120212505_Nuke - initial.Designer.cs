@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Capstone.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201120193153_Tweaks")]
-    partial class Tweaks
+    [Migration("20201120212505_Nuke - initial")]
+    partial class Nukeinitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -43,7 +43,7 @@ namespace Capstone.Migrations
                     b.Property<string>("StreetAddress")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ZipCode")
+                    b.Property<int>("Zip")
                         .HasColumnType("int");
 
                     b.HasKey("AddressId");
@@ -144,6 +144,26 @@ namespace Capstone.Migrations
                     b.ToTable("Clients");
                 });
 
+            modelBuilder.Entity("Capstone.Models.DefaultTime", b =>
+                {
+                    b.Property<int>("DefaultTimeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("RuleSetId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("DefaultTimeId");
+
+                    b.HasIndex("RuleSetId");
+
+                    b.ToTable("DefaultTimes");
+                });
+
             modelBuilder.Entity("Capstone.Models.PendingAppointment", b =>
                 {
                     b.Property<int>("PendingAppointmentId")
@@ -196,7 +216,7 @@ namespace Capstone.Migrations
                     b.Property<DateTime>("ServiceStart")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("ServicedBefore")
+                    b.Property<bool?>("ServicedBefore")
                         .HasColumnType("bit");
 
                     b.Property<string>("State")
@@ -205,7 +225,7 @@ namespace Capstone.Migrations
                     b.Property<string>("StreetAddress")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ZipCode")
+                    b.Property<int>("Zip")
                         .HasColumnType("int");
 
                     b.HasKey("PendingAppointmentId");
@@ -295,8 +315,8 @@ namespace Capstone.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "dbe5bbe6-6ffc-41e5-a384-009036f876c6",
-                            ConcurrencyStamp = "2911a8ff-fc58-4098-b7ae-9d8a7eea1a5d",
+                            Id = "ac40f054-0eb6-4f28-9aa7-52bf4f5bfd28",
+                            ConcurrencyStamp = "a2be2ce6-ff2b-47e9-82bf-7d5238be499b",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -494,6 +514,15 @@ namespace Capstone.Migrations
                     b.HasOne("Capstone.Models.Address", "Address")
                         .WithMany()
                         .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Capstone.Models.DefaultTime", b =>
+                {
+                    b.HasOne("Capstone.Models.RuleSet", "RuleSet")
+                        .WithMany()
+                        .HasForeignKey("RuleSetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

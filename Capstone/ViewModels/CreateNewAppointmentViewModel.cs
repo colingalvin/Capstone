@@ -27,7 +27,7 @@ namespace Capstone.ViewModels
         public string StreetAddress { get; set; }
         public string City { get; set; }
         public string State { get; set; }
-        public int ZipCode { get; set; }
+        public int Zip { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
 

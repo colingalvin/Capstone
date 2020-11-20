@@ -18,6 +18,8 @@ namespace Capstone.Models
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
         public string Email { get; set; }
+
+        [DisplayFormat(DataFormatString ="{0:(###)###-####}")]
         public string Phone { get; set; }
 
         [ForeignKey("Address")]
