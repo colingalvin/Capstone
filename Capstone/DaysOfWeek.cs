@@ -8,15 +8,21 @@ namespace Capstone
 {
     public static class DaysOfWeek
     {
-        public static List<SelectListItem> Days = new List<SelectListItem>()
+        public class Day
         {
-            new SelectListItem() { Text="Sunday", Value="Sunday" },
-            new SelectListItem() { Text="Monday", Value="Monday" },
-            new SelectListItem() { Text="Tuesday", Value="Tuesday" },
-            new SelectListItem() { Text="Wednesday", Value="Wednesday" },
-            new SelectListItem() { Text="Thursday", Value="Thursday" },
-            new SelectListItem() { Text="Friday", Value="Friday" },
-            new SelectListItem() { Text="Saturday", Value="Saturday" },
+            public string Name { get; set; }
+            public DayOfWeek Value { get; set; }
+        }
+
+        public static List<Day> Days = new List<Day>()
+        {
+            new Day() { Name="Sunday", Value=DayOfWeek.Sunday },
+            new Day() { Name="Monday", Value=DayOfWeek.Monday },
+            new Day() { Name="Tuesday", Value=DayOfWeek.Tuesday },
+            new Day() { Name="Wednesday", Value=DayOfWeek.Wednesday },
+            new Day() { Name="Thursday", Value=DayOfWeek.Thursday },
+            new Day() { Name="Friday", Value=DayOfWeek.Friday },
+            new Day() { Name="Saturday", Value=DayOfWeek.Saturday },
         };
     }
 }

@@ -41,8 +41,14 @@ namespace Capstone.Controllers
             CreateNewRuleSetViewModel ruleSet;
             if (id != null)
             {
-                RuleSet existingRuleSet = _context.RuleSets.Where(rs => rs.RuleSetId == id).SingleOrDefault();
+                RuleSet existingRuleSet = _context.RuleSets.Include(rs => rs.Address).Where(rs => rs.RuleSetId == id).SingleOrDefault();
                 List<AppointmentBlock> existingBlocks = _context.AppointmentBlocks.Where(ab => ab.RuleSetId == existingRuleSet.RuleSetId).ToList();
+                List<DefaultTime> existingDefaultTimes = _context.DefaultTimes.Where(dt => dt.RuleSetId == existingRuleSet.RuleSetId).ToList();
+                List<DateTime> existingTimes = new List<DateTime>();
+                foreach(DefaultTime time in existingDefaultTimes)
+                {
+                    existingTimes.Add(time.StartTime);
+                }
                 List<DayOfWeek> days = new List<DayOfWeek>();
                 foreach(var block in existingBlocks)
                     {
@@ -56,7 +62,10 @@ namespace Capstone.Controllers
                     Default = existingRuleSet.Default,
                     Days = days,
                     StartTime = existingBlocks[0].StartTime,
-                    EndTime = existingBlocks[0].EndTime
+                    EndTime = existingBlocks[0].EndTime,
+                    DefaultTimes = existingTimes,
+                    StreetAddress = existingRuleSet.Address.StreetAddress,
+                    Zip = existingRuleSet.Address.Zip
                 };
             }
             else
@@ -67,21 +76,35 @@ namespace Capstone.Controllers
         }
 
         //[BindProperty]
-        //public List<string> Days { get; set; }
-        //[BindProperty]
-        //public List<string> Times { get; set; }
+        //public List<DateTime> DefaultTimes { get; set; }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CreateRuleSet(CreateNewRuleSetViewModel ruleSet)
         {
             if (ruleSet.RuleSetId == 0)
             {
+                // Check for existing/create new address
+                var matchingAddress = _context.Addresses.Where(a => a.StreetAddress == ruleSet.StreetAddress).SingleOrDefault();
+                if (matchingAddress == null)
+                {
+                    Address address = new Address()
+                    {
+                        StreetAddress = ruleSet.StreetAddress,
+                        Zip = ruleSet.Zip
+                    };
+                    // Geocode/fill in additional Address information
+                    _context.Addresses.Add(address);
+                    _context.SaveChanges();
+                    matchingAddress = address;
+                }
+
                 // Create new rule set
                 RuleSet newRuleSet = new RuleSet()
                 {
                     StartDate = ruleSet.StartDate,
                     EndDate = ruleSet.EndDate,
-                    Default = ruleSet.Default
+                    Default = ruleSet.Default,
+                    HomeAddressId = matchingAddress.AddressId
                 };
                 _context.RuleSets.Add(newRuleSet);
                 _context.SaveChanges();
@@ -99,6 +122,18 @@ namespace Capstone.Controllers
                     };
                     _context.AppointmentBlocks.Add(appointmentBlock);
                 }
+
+                // Create new default appointment times
+                foreach (var time in ruleSet.DefaultTimes)
+                {
+                    DefaultTime defaultTime = new DefaultTime()
+                    {
+                        StartTime = time,
+                        RuleSetId = newRuleSet.RuleSetId,
+                        RuleSet = newRuleSet
+                    };
+                    _context.DefaultTimes.Add(defaultTime);
+                }
                 _context.SaveChanges();
             }
             else
@@ -110,8 +145,23 @@ namespace Capstone.Controllers
                 existingRuleSet.Default = ruleSet.Default;
                 _context.RuleSets.Update(existingRuleSet);
 
+                // Check for changes to address
+                Address address = _context.Addresses.Where(a => a.AddressId == existingRuleSet.HomeAddressId).SingleOrDefault();
+                if (existingRuleSet.Address.StreetAddress != address.StreetAddress)
+                {
+                    Address newAddress = new Address()
+                    {
+                        StreetAddress = ruleSet.StreetAddress,
+                        Zip = ruleSet.Zip
+                    };
+                    // Geocode/fill in additional Address information
+                    _context.Addresses.Add(newAddress);
+                    _context.SaveChanges();
+                    existingRuleSet.HomeAddressId = newAddress.AddressId;
+                }
+
                 // Delete all appointment blocks associated with rule set id
-                List<AppointmentBlock> blocks = _context.AppointmentBlocks.Include(ab => ab.RuleSet == existingRuleSet).Where(ab => ab.RuleSetId == existingRuleSet.RuleSetId).ToList();
+                List<AppointmentBlock> blocks = _context.AppointmentBlocks.Include(ab => ab.RuleSet).Where(ab => ab.RuleSetId == existingRuleSet.RuleSetId).ToList();
                 foreach(AppointmentBlock block in blocks)
                 {
                     _context.AppointmentBlocks.Remove(block);
@@ -132,6 +182,27 @@ namespace Capstone.Controllers
                     _context.AppointmentBlocks.Add(appointmentBlock);
                 }
                 _context.SaveChanges();
+
+                // Delete all default appointment times associated with rule set id
+                List<DefaultTime> defaultTimes = _context.DefaultTimes.Include(dt => dt.RuleSet).Where(dt => dt.RuleSetId == existingRuleSet.RuleSetId).ToList();
+                foreach (DefaultTime defaultTime in defaultTimes)
+                {
+                    _context.DefaultTimes.Remove(defaultTime);
+                }
+                _context.SaveChanges();
+
+                // Create new default appointment times associated with rule set id
+                foreach (DateTime time in ruleSet.DefaultTimes)
+                {
+                    DefaultTime defaultTime = new DefaultTime()
+                    {
+                        StartTime = time,
+                        RuleSetId = existingRuleSet.RuleSetId,
+                        RuleSet = existingRuleSet
+                    };
+                    _context.DefaultTimes.Add(defaultTime);
+                    _context.SaveChanges();
+                }
             }
             return RedirectToAction("ViewRuleSets");
         }

@@ -96,21 +96,6 @@ namespace Capstone.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RuleSets",
-                columns: table => new
-                {
-                    RuleSetId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    StartDate = table.Column<DateTime>(nullable: false),
-                    EndDate = table.Column<DateTime>(nullable: true),
-                    Default = table.Column<bool>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RuleSets", x => x.RuleSetId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Clients",
                 columns: table => new
                 {
@@ -129,6 +114,28 @@ namespace Capstone.Migrations
                     table.ForeignKey(
                         name: "FK_Clients_Addresses_AddressId",
                         column: x => x.AddressId,
+                        principalTable: "Addresses",
+                        principalColumn: "AddressId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RuleSets",
+                columns: table => new
+                {
+                    RuleSetId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StartDate = table.Column<DateTime>(nullable: false),
+                    EndDate = table.Column<DateTime>(nullable: true),
+                    Default = table.Column<bool>(nullable: false),
+                    HomeAddressId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RuleSets", x => x.RuleSetId);
+                    table.ForeignKey(
+                        name: "FK_RuleSets_Addresses_HomeAddressId",
+                        column: x => x.HomeAddressId,
                         principalTable: "Addresses",
                         principalColumn: "AddressId",
                         onDelete: ReferentialAction.Cascade);
@@ -241,6 +248,30 @@ namespace Capstone.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Pianos",
+                columns: table => new
+                {
+                    PianoId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ClientId = table.Column<int>(nullable: false),
+                    Make = table.Column<string>(nullable: true),
+                    Configuration = table.Column<string>(nullable: true),
+                    Model = table.Column<string>(nullable: true),
+                    LastService = table.Column<DateTime>(nullable: true),
+                    TechnicianNotes = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Pianos", x => x.PianoId);
+                    table.ForeignKey(
+                        name: "FK_Pianos_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Clients",
+                        principalColumn: "ClientId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AppointmentBlocks",
                 columns: table => new
                 {
@@ -283,30 +314,6 @@ namespace Capstone.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Pianos",
-                columns: table => new
-                {
-                    PianoId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ClientId = table.Column<int>(nullable: false),
-                    Make = table.Column<string>(nullable: true),
-                    Configuration = table.Column<string>(nullable: true),
-                    Model = table.Column<string>(nullable: true),
-                    LastService = table.Column<DateTime>(nullable: true),
-                    TechnicianNotes = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Pianos", x => x.PianoId);
-                    table.ForeignKey(
-                        name: "FK_Pianos_Clients_ClientId",
-                        column: x => x.ClientId,
-                        principalTable: "Clients",
-                        principalColumn: "ClientId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Appointments",
                 columns: table => new
                 {
@@ -334,7 +341,7 @@ namespace Capstone.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "ac40f054-0eb6-4f28-9aa7-52bf4f5bfd28", "a2be2ce6-ff2b-47e9-82bf-7d5238be499b", "Admin", "ADMIN" });
+                values: new object[] { "cacb9364-e1d0-44d4-8870-82c71691c716", "2039ff13-1714-4484-a8a8-f21b6da10ee4", "Admin", "ADMIN" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AppointmentBlocks_RuleSetId",
@@ -399,6 +406,11 @@ namespace Capstone.Migrations
                 name: "IX_Pianos_ClientId",
                 table: "Pianos",
                 column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RuleSets_HomeAddressId",
+                table: "RuleSets",
+                column: "HomeAddressId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

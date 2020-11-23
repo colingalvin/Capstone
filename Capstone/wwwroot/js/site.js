@@ -3,9 +3,9 @@
 
 // Write your JavaScript code.
 
-function populateMap(event) {
-    $("#address").append(
-        "<h2>Populate Map</h2>"
+function addTime(event) {
+    $("#defaultTimes").append(
+        '<input name="DefaultTimes" type="time" class="form-control" />'
     );
     event.preventDefault();
 }

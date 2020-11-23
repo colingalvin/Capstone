@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Capstone.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -16,7 +17,6 @@ namespace Capstone.ViewModels
         [DataType(DataType.Date)]
         public DateTime? EndDate { get; set; }
         public bool Default { get; set; }
-
         public List<DayOfWeek> Days { get; set; }
 
         [DataType(DataType.Time)]
@@ -24,5 +24,9 @@ namespace Capstone.ViewModels
 
         [DataType(DataType.Time)]
         public DateTime EndTime { get; set; }
+
+        public List<DateTime> DefaultTimes { get; set; }
+        public string StreetAddress { get; set; }
+        public int Zip { get; set; }
     }
 }

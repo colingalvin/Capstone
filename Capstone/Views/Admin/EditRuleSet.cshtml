@@ -1,7 +1,7 @@
 ﻿@model Capstone.ViewModels.CreateNewRuleSetViewModel
 
 @{
-    ViewData["Title"] = "CreateRuleSeet";
+    ViewData["Title"] = "CreateRuleSet";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -26,6 +26,16 @@
                 <input asp-for="EndDate" class="form-control" />
                 <span asp-validation-for="EndDate" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="StreetAddress" class="control-label"></label>
+                <input asp-for="StreetAddress" class="form-control" />
+                <span asp-validation-for="StreetAddress" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Zip" class="control-label"></label>
+                <input asp-for="Zip" class="form-control" />
+                <span asp-validation-for="Zip" class="text-danger"></span>
+            </div>
             <div class="form-group form-check">
                 <label class="form-check-label">
                     <input class="form-check-input" asp-for="Default" /> @Html.DisplayNameFor(model => model.Default)
@@ -33,13 +43,34 @@
             </div>
             <div class="form-check">
                 <label for="Days" class="control-label"></label>
-                @foreach (var day in DaysOfWeek.Days)
+                @if (Model.Days == null)
                 {
-                    <br />
-                    <input name="Days" type="checkbox" value="@day.Value" id="defaultCheck1">
-                    <label class="form-check-label" for="defaultCheck1">
-                        @day.Text
-                    </label>
+                    @foreach (var day in DaysOfWeek.Days)
+                    {
+                        <br />
+                        <input name="Days" type="checkbox" value="@day.Name" id="defaultCheck1">
+                        <label class="form-check-label" for="defaultCheck1">
+                            @day.Name
+                        </label>
+                    }
+                }
+                else
+                {
+                    @foreach (var day in DaysOfWeek.Days)
+                    {
+                        <br />
+                        @if (Model.Days.Contains(day.Value))
+                        {
+                            <input checked name="Days" type="checkbox" value="@day.Name" id="defaultCheck1">
+                        }
+                        else
+                        {
+                            <input name="Days" type="checkbox" value="@day.Name" id="defaultCheck1">
+                        }
+                        <label class="form-check-label" for="defaultCheck1">
+                            @day.Name
+                        </label>
+                    }
                 }
             </div>
             <div class="form-group">
@@ -52,6 +83,22 @@
                 <input asp-for="EndTime" class="form-control" />
                 <span asp-validation-for="EndTime" class="text-danger"></span>
             </div>
+            <div class="form-group" id="defaultTimes">
+                <label asp-for="DefaultTimes" class="control-label"></label>
+                @if (Model.DefaultTimes != null)
+                {
+                    @foreach (var time in Model.DefaultTimes)
+                    {
+                        <input name="DefaultTimes" value="@time.TimeOfDay" type="time" class="form-control" />
+                    }
+                }
+                @if (Model.DefaultTimes == null)
+                {
+                    <input name="DefaultTimes" type="time" class="form-control" />
+                }
+                <span asp-validation-for="DefaultTimes" class="text-danger"></span>
+            </div>
+            <button type="button" onclick="addTime(event)">Add Time</button>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

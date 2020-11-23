@@ -276,10 +276,15 @@ namespace Capstone.Migrations
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("HomeAddressId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("RuleSetId");
+
+                    b.HasIndex("HomeAddressId");
 
                     b.ToTable("RuleSets");
                 });
@@ -313,8 +318,8 @@ namespace Capstone.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "ac40f054-0eb6-4f28-9aa7-52bf4f5bfd28",
-                            ConcurrencyStamp = "a2be2ce6-ff2b-47e9-82bf-7d5238be499b",
+                            Id = "cacb9364-e1d0-44d4-8870-82c71691c716",
+                            ConcurrencyStamp = "2039ff13-1714-4484-a8a8-f21b6da10ee4",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -530,6 +535,15 @@ namespace Capstone.Migrations
                     b.HasOne("Capstone.Models.Client", "Client")
                         .WithMany()
                         .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Capstone.Models.RuleSet", b =>
+                {
+                    b.HasOne("Capstone.Models.Address", "Address")
+                        .WithMany()
+                        .HasForeignKey("HomeAddressId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
