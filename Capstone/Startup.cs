@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Capstone.ActionFilters;
+using Capstone.Services;
 
 namespace Capstone
 {
@@ -44,6 +45,7 @@ namespace Capstone
             });
             services.AddControllersWithViews();
             services.AddRazorPages();
+            services.AddScoped<GoogleService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

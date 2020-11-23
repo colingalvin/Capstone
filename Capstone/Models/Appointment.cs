@@ -16,6 +16,10 @@ namespace Capstone.Models
         public int PianoId { get; set; }
         public Piano Piano { get; set; }
 
+        public double Latitude { get; set; }
+
+        public double Longitude { get; set; }
+
         public string IncludedServices { get; set; }
 
         [Display(Name = "Customer Notes")]

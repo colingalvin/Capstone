@@ -233,6 +233,8 @@ namespace Capstone.Controllers
                 CustomerNotes = appointment.CustomerNotes,
                 ServiceStart = appointment.ServiceStart,
                 ServiceEnd = appointment.ServiceEnd,
+                Latitude = appointment.Latitude,
+                Longitude = appointment.Longitude
             };
 
             var matchingClients = _context.Clients.Include(c => c.Address).Where(c => (c.FirstName == appointment.FirstName) && (c.LastName == appointment.LastName)).ToList();
@@ -250,8 +252,6 @@ namespace Capstone.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult CreateAppointment(CreateNewAppointmentViewModel model)
         {
-            model.Latitude = 0;
-            model.Longitude = 0;
             int clientId = model.ClientId;
             int pianoId = model.PianoId;
             if (!ModelState.IsValid)
@@ -266,8 +266,9 @@ namespace Capstone.Controllers
                             StreetAddress = model.StreetAddress,
                             City = model.City,
                             State = model.State,
-                            Zip = model.Zip
-                            // Geocode Address
+                            Zip = model.Zip,
+                            Latitude = model.Latitude,
+                            Longitude = model.Longitude
                         };
                         _context.Addresses.Add(address);
                         _context.SaveChanges();
@@ -313,7 +314,9 @@ namespace Capstone.Controllers
                 IncludedServices = model.IncludedServices,
                 CustomerNotes = model.CustomerNotes,
                 ServiceStart = model.ServiceStart,
-                ServiceEnd = model.ServiceEnd
+                ServiceEnd = model.ServiceEnd,
+                Latitude = model.Latitude,
+                Longitude = model.Longitude
             };
 
             _context.Appointments.Add(appointment);

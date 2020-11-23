@@ -43,9 +43,9 @@
     <p>Estimated Duration: @Model.EstimatedDuration min.</p>
     <p>Notes: @Model.CustomerNotes</p>
     <p>Available Appointments:</p>
-    @foreach (var item in ViewBag.availableAppointments)
+    @foreach (var item in ViewBag.preferredDayAppointments)
     {
-        <input asp-for="ServiceStart" value="@item" type="radio">@item.ToString("ddd, MMM hh:mm tt")<br />
+        <input asp-for="ServiceStart" value="@item" type="radio">@item.ToString("ddd, MMM dd hh:mm tt")<br />
     }
 
     <div class="form-group">
