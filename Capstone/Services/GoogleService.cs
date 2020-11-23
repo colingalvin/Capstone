@@ -12,7 +12,7 @@ namespace Capstone.Services
 {
     public class GoogleService
     {
-        public async Task<TimeSpan> GetTravelDuration(double originLat, double originLng, double destinationLat, double destinationLng)
+        public async Task<TimeSpan> GetTravelTime(double originLat, double originLng, double destinationLat, double destinationLng)
         {
             TimeSpan travelTime = new TimeSpan(0, 0, 0);
             Uri directionsURL = new Uri($"https://maps.googleapis.com/maps/api/directions/json?origin={originLat},{originLng}&destination={destinationLat},{destinationLng}&key={ApiKeys.googleApiKey}");

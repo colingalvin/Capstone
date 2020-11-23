@@ -82,8 +82,8 @@ namespace Capstone.Controllers
             // Geocode address
             pendingAppointment = await _google.GeocodeAddress(pendingAppointment);
 
-            ViewBag.preferredDayAppointments = await GetPreferredDayAppointments(pendingAppointment);
-            //ViewBag.alternateDayAppointments = await GetAlternateDayAppointments(pendingAppointment);
+            List<DateTime> availableAppointments = new List<DateTime>();
+            ViewBag.availableAppointments = await GetAppointments(pendingAppointment, availableAppointments);
             
             // Logic for checking database for available appointments
             // Bind appointments to ViewBag
@@ -106,72 +106,80 @@ namespace Capstone.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        private async Task<List<DateTime>> GetPreferredDayAppointments(PendingAppointment pendingAppointment)
+        private async Task<List<DateTime>> GetAppointments(PendingAppointment pendingAppointment, List<DateTime> availableAppointments)
         {
-            // Find all existing appointments for preferred appointment date
-            var existingAppointments = _context.Appointments.Where(a => a.ServiceStart.Date == pendingAppointment.PreferredAppointmentDate).ToList();
+            // Start with preferred appointment day
+            DateTime currentDay = pendingAppointment.PreferredAppointmentDate;
 
             // Find relevant rule set
-            var currentRuleSet = _context.RuleSets.Where(rs => rs.StartDate <= pendingAppointment.PreferredAppointmentDate.Date).OrderByDescending(rs => rs.StartDate).FirstOrDefault();
-
-            List<DateTime> availableAppointments = new List<DateTime>();
-
-            // If appointments exist
-            if (existingAppointments.Count > 0)
+            var currentRuleSet = _context.RuleSets.Where(rs => rs.StartDate <= currentDay.Date).OrderByDescending(rs => rs.StartDate).FirstOrDefault();
+            do
             {
-                // Calculate if any pending appointment is within range
-                foreach (Appointment appointment in existingAppointments)
+                // Find all existing appointments for preferred appointment date
+                var existingAppointments = _context.Appointments.Where(a => a.ServiceStart.Date == currentDay.Date).ToList();
+
+                // If appointments exist
+                if (existingAppointments.Count > 0)
                 {
-                    // Calculate drive time from each existing appointment to pending appointment
-                    var driveTime = await _google.GetTravelDuration(appointment.Latitude, appointment.Longitude, pendingAppointment.Latitude, pendingAppointment.Longitude);
-
-                    //If drive time is within drive time limitatons
-                    if (TimeSpan.Compare(driveTime, DefaultSettings.maxDriveTime) <= 0)
+                    // Calculate if any pending appointment is within range
+                    foreach (Appointment appointment in existingAppointments)
                     {
-                        // Calculate start time of new appointment, rounded up to nearest quarter hour
-                        DateTime startTime = CalculateServiceStart(appointment.ServiceEnd + driveTime, TimeSpan.FromMinutes(15));
+                        // Calculate drive time from each existing appointment to pending appointment
+                        var driveTime = await _google.GetTravelTime(appointment.Latitude, appointment.Longitude, pendingAppointment.Latitude, pendingAppointment.Longitude);
 
-                        // Add new appointment time to list with start time calculated from end time of appointment rounded to nearest 15 minutes
-                        var newAppointmentTime = new DateTime(
-                            pendingAppointment.PreferredAppointmentDate.Year,
-                            pendingAppointment.PreferredAppointmentDate.Month,
-                            pendingAppointment.PreferredAppointmentDate.Day,
-                            startTime.Hour,
-                            startTime.Minute,
-                            startTime.Second
-                        );
-                        availableAppointments.Add(newAppointmentTime);
+                        //If drive time is within drive time limitatons
+                        if (TimeSpan.Compare(driveTime, DefaultSettings.maxDriveTime) <= 0)
+                        {
+                            // Calculate start time of new appointment, rounded up to nearest quarter hour
+                            DateTime startTime = CalculateServiceStart(appointment.ServiceEnd + driveTime, TimeSpan.FromMinutes(15));
+
+                            // Calculate estimated end time of new appointment from estimated start time
+                            DateTime endTime = startTime + new TimeSpan(0, pendingAppointment.EstimatedDuration, 0);
+
+
+                            // Find appointment block in current rule set for correct day of week
+                            var appointmentBlock = _context.AppointmentBlocks.Where(ab => (ab.RuleSetId == currentRuleSet.RuleSetId) && (ab.Day == currentDay.DayOfWeek)).SingleOrDefault();
+                            var appointmentBlockEndTime = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, appointmentBlock.EndTime.Hour, appointmentBlock.EndTime.Minute, appointmentBlock.EndTime.Second);
+
+                            // If appointment will end before the end of the work day
+                            if (DateTime.Compare(endTime, appointmentBlockEndTime) <= 1)
+                            {
+                                // Add new appointment time to list with start time calculated from end time of appointment rounded to nearest 15 minutes
+                                var newAppointmentTime = new DateTime(
+                                    currentDay.Year,
+                                    currentDay.Month,
+                                    currentDay.Day,
+                                    startTime.Hour,
+                                    startTime.Minute,
+                                    startTime.Second
+                                );
+                                availableAppointments.Add(newAppointmentTime);
+                            };
+                        };
+                    }
+                }
+                else
+                {
+                    // Find default times
+                    var defaultTimes = _context.DefaultTimes.Where(dt => dt.RuleSetId == currentRuleSet.RuleSetId).ToList();
+
+                    // Create appointments based on default appointment times
+                    foreach (DefaultTime time in defaultTimes)
+                    {
+                        var defaultTime = new DateTime(
+                            currentDay.Year,
+                            currentDay.Month,
+                            currentDay.Day,
+                            time.StartTime.Hour,
+                            time.StartTime.Minute,
+                            time.StartTime.Second
+                            );
+                        availableAppointments.Add(defaultTime);
                     };
                 }
-
-                // If no existing appointments are within range
-                if (availableAppointments.Count == 0)
-                {
-                    // Get appointments for another day
-                }
+                currentDay += new TimeSpan(24, 0, 0);
             }
-            else
-            {
-                // Find appointment block in current rule set for correct day of week
-                var appointmentBlock = _context.AppointmentBlocks.Where(ab => (ab.RuleSetId == currentRuleSet.RuleSetId) && (ab.Day == pendingAppointment.PreferredAppointmentDate.DayOfWeek)).SingleOrDefault();
-
-                // Find default times
-                var defaultTimes = _context.DefaultTimes.Where(dt => dt.RuleSetId == currentRuleSet.RuleSetId).ToList();
-
-                // Create appointments based on default appointment times
-                foreach (DefaultTime time in defaultTimes)
-                {
-                    var dateTime = new DateTime(
-                        pendingAppointment.PreferredAppointmentDate.Year,
-                        pendingAppointment.PreferredAppointmentDate.Month,
-                        pendingAppointment.PreferredAppointmentDate.Day,
-                        time.StartTime.Hour,
-                        time.StartTime.Minute,
-                        time.StartTime.Second
-                        );
-                    availableAppointments.Add(dateTime);
-                }
-            }
+            while (availableAppointments.Count < 10);
             return availableAppointments;
         }
         
