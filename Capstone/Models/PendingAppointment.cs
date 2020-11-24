@@ -59,5 +59,9 @@ namespace Capstone.Models
 
         [Display(Name = "Appointment End")]
         public DateTime ServiceEnd { get; set; }
+
+        [Display(Name = "Estimated Cost")]
+        [DataType(DataType.Currency)]
+        public int EstimatedCost { get; set; }
     }
 }

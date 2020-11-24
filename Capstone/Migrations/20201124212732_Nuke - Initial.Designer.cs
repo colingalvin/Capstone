@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Capstone.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201123142445_Nuke - initial")]
-    partial class Nukeinitial
+    [Migration("20201124212732_Nuke - Initial")]
+    partial class NukeInitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -61,11 +61,14 @@ namespace Capstone.Migrations
                     b.Property<string>("CustomerNotes")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("IncludedServices")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsComplete")
                         .HasColumnType("bit");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("float");
 
                     b.Property<int>("PianoId")
                         .HasColumnType("int");
@@ -75,6 +78,9 @@ namespace Capstone.Migrations
 
                     b.Property<DateTime>("ServiceStart")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Services")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TechnicianNotes")
                         .HasColumnType("nvarchar(max)");
@@ -134,9 +140,6 @@ namespace Capstone.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TechnicianNotes")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("ClientId");
 
                     b.HasIndex("AddressId");
@@ -180,13 +183,13 @@ namespace Capstone.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("EstimatedCost")
+                        .HasColumnType("int");
+
                     b.Property<int>("EstimatedDuration")
                         .HasColumnType("int");
 
                     b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IncludedServices")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
@@ -218,6 +221,9 @@ namespace Capstone.Migrations
 
                     b.Property<bool?>("ServicedBefore")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Services")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
@@ -320,8 +326,8 @@ namespace Capstone.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "cacb9364-e1d0-44d4-8870-82c71691c716",
-                            ConcurrencyStamp = "2039ff13-1714-4484-a8a8-f21b6da10ee4",
+                            Id = "9671e399-4ff2-4148-9106-29db23e7292b",
+                            ConcurrencyStamp = "b0157da5-c3b6-453c-9d9e-ffe9c2c7c40b",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });

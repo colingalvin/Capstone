@@ -18,13 +18,14 @@
     <input type="hidden" asp-for="City" />
     <input type="hidden" asp-for="State" />
     <input type="hidden" asp-for="Zip" />
-    <input type="hidden" asp-for="Latitude" />
-    <input type="hidden" asp-for="Longitude" />
     <input type="hidden" asp-for="PianoMake" />
     <input type="hidden" asp-for="PianoConfiguration" />
     <input type="hidden" asp-for="Services" />
     <input type="hidden" asp-for="EstimatedDuration" />
     <input type="hidden" asp-for="CustomerNotes" />
+    <input type="hidden" asp-for="EstimatedCost" />
+    <input type="hidden" asp-for="Latitude" />
+    <input type="hidden" asp-for="Longitude" />
     <input type="hidden" asp-for="ServicedBefore" />
     <input type="hidden" asp-for="PreferredAppointmentDate" />
     <input type="hidden" asp-for="ServiceEnd" />
@@ -42,6 +43,7 @@
     <p>Piano: @Model.PianoMake @Model.PianoConfiguration</p>
     <p>Included Services: @Model.Services</p>
     <p>Estimated Duration: @Model.EstimatedDuration min.</p>
+    <p>Estimated Cost: $@Model.EstimatedCost</p>
     <p>Notes: @Model.CustomerNotes</p>
     <p>Available Appointments:</p>
     @foreach (var item in ViewBag.availableAppointments)
@@ -54,7 +56,7 @@
     </div>
 </form>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=@ApiKeys.googleApiKey&callback=initMap&libraries=&v=weekly"defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=@AuthenticationInfo.googleApiKey&callback=initMap&libraries=&v=weekly"defer></script>
 <script>
     let map;
     function initMap() {

@@ -46,6 +46,7 @@ namespace Capstone
             services.AddControllersWithViews();
             services.AddRazorPages();
             services.AddScoped<GoogleService>();
+            services.AddScoped<MailKitService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -15,7 +15,7 @@ namespace Capstone.Services
         public async Task<TimeSpan> GetTravelTime(double originLat, double originLng, double destinationLat, double destinationLng)
         {
             TimeSpan travelTime = new TimeSpan(0, 0, 0);
-            Uri directionsURL = new Uri($"https://maps.googleapis.com/maps/api/directions/json?origin={originLat},{originLng}&destination={destinationLat},{destinationLng}&key={ApiKeys.googleApiKey}");
+            Uri directionsURL = new Uri($"https://maps.googleapis.com/maps/api/directions/json?origin={originLat},{originLng}&destination={destinationLat},{destinationLng}&key={AuthenticationInfo.googleApiKey}");
             HttpClient httpClient = new HttpClient();
             var response = await httpClient.GetAsync(directionsURL);
 
@@ -33,7 +33,7 @@ namespace Capstone.Services
         public async Task<PendingAppointment> GeocodeAddress(PendingAppointment pendingAppointment)
         {
             string parsedAddress = ParseAddress(pendingAppointment.StreetAddress, pendingAppointment.Zip);
-            Uri directionsURL = new Uri($"https://maps.googleapis.com/maps/api/geocode/json?address={parsedAddress}&key={ApiKeys.googleApiKey}");
+            Uri directionsURL = new Uri($"https://maps.googleapis.com/maps/api/geocode/json?address={parsedAddress}&key={AuthenticationInfo.googleApiKey}");
             HttpClient httpClient = new HttpClient();
             var response = await httpClient.GetAsync(directionsURL);
 

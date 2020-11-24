@@ -16,12 +16,14 @@ namespace Capstone.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
         public GoogleService _google;
+        public MailKitService _mailKit;
 
-        public HomeController(ApplicationDbContext context, ILogger<HomeController> logger, GoogleService google)
+        public HomeController(ApplicationDbContext context, ILogger<HomeController> logger, GoogleService google, MailKitService mailKit)
         {
             _context = context;
             _logger = logger;
             _google = google;
+            _mailKit = mailKit;
         }
 
         public IActionResult Index()
@@ -58,6 +60,7 @@ namespace Capstone.Controllers
                     if (includedService == service.Name)
                     {
                         pendingAppointment.EstimatedDuration += service.Time;
+                        pendingAppointment.EstimatedCost += service.Cost;
                         break;
                     }
                 }
@@ -66,6 +69,7 @@ namespace Capstone.Controllers
                     if (includedService == service.Name)
                     {
                         pendingAppointment.EstimatedDuration += service.Time;
+                        pendingAppointment.EstimatedCost += service.Cost;
                         break;
                     }
                 }
@@ -74,6 +78,7 @@ namespace Capstone.Controllers
                     if (includedService == service.Name)
                     {
                         pendingAppointment.EstimatedDuration += service.Time;
+                        pendingAppointment.EstimatedCost += service.Cost;
                         break;
                     }
                 }
@@ -95,6 +100,7 @@ namespace Capstone.Controllers
             pendingAppointment.ServiceEnd = pendingAppointment.ServiceStart + duration;
             _context.PendingAppointments.Add(pendingAppointment);
             _context.SaveChanges();
+            _mailKit.ConfirmAppointmentRequest(pendingAppointment);
 
             return View(pendingAppointment);
         }
@@ -112,10 +118,13 @@ namespace Capstone.Controllers
             // Start with preferred appointment day
             DateTime currentDay = pendingAppointment.PreferredAppointmentDate;
 
-            // Find relevant rule set
-            var currentRuleSet = _context.RuleSets.Where(rs => rs.StartDate <= currentDay.Date).OrderByDescending(rs => rs.StartDate).FirstOrDefault();
+            // Need logic if rule set does not exist
+            
             do
             {
+                // Find relevant rule set
+                var currentRuleSet = _context.RuleSets.Where(rs => rs.StartDate <= currentDay.Date).OrderByDescending(rs => rs.StartDate).FirstOrDefault();
+
                 // Find all existing appointments for preferred appointment date
                 var existingAppointments = _context.Appointments.Where(a => a.ServiceStart.Date == currentDay.Date).ToList();
 
@@ -164,19 +173,25 @@ namespace Capstone.Controllers
                     // Find default times
                     var defaultTimes = _context.DefaultTimes.Where(dt => dt.RuleSetId == currentRuleSet.RuleSetId).ToList();
 
-                    // Create appointments based on default appointment times
-                    foreach (DefaultTime time in defaultTimes)
+                    // Find appointment block in current rule set for correct day of week
+                    var appointmentBlock = _context.AppointmentBlocks.Where(ab => (ab.RuleSetId == currentRuleSet.RuleSetId) && (ab.Day == currentDay.DayOfWeek)).SingleOrDefault();
+
+                    if (appointmentBlock != null)
                     {
-                        var defaultTime = new DateTime(
-                            currentDay.Year,
-                            currentDay.Month,
-                            currentDay.Day,
-                            time.StartTime.Hour,
-                            time.StartTime.Minute,
-                            time.StartTime.Second
-                            );
-                        availableAppointments.Add(defaultTime);
-                    };
+                        // Create appointments based on default appointment times
+                        foreach (DefaultTime time in defaultTimes)
+                        {
+                            var defaultTime = new DateTime(
+                                currentDay.Year,
+                                currentDay.Month,
+                                currentDay.Day,
+                                time.StartTime.Hour,
+                                time.StartTime.Minute,
+                                time.StartTime.Second
+                                );
+                            availableAppointments.Add(defaultTime);
+                        };
+                    }
                 }
                 currentDay += new TimeSpan(24, 0, 0);
             }

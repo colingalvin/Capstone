@@ -181,6 +181,9 @@ namespace Capstone.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("EstimatedCost")
+                        .HasColumnType("int");
+
                     b.Property<int>("EstimatedDuration")
                         .HasColumnType("int");
 
@@ -321,8 +324,8 @@ namespace Capstone.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a01ad17a-f973-42f1-acae-001d8ade806c",
-                            ConcurrencyStamp = "057624f7-1426-4963-bc2c-f9273d6ac45f",
+                            Id = "9671e399-4ff2-4148-9106-29db23e7292b",
+                            ConcurrencyStamp = "b0157da5-c3b6-453c-9d9e-ffe9c2c7c40b",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });

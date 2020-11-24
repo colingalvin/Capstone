@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Capstone.Migrations
 {
-    public partial class Nukeinitial : Migration
+    public partial class NukeInitial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -82,13 +82,14 @@ namespace Capstone.Migrations
                     Longitude = table.Column<double>(nullable: false),
                     PianoMake = table.Column<string>(nullable: true),
                     PianoConfiguration = table.Column<string>(nullable: true),
-                    IncludedServices = table.Column<string>(nullable: true),
+                    Services = table.Column<string>(nullable: true),
                     EstimatedDuration = table.Column<int>(nullable: false),
                     CustomerNotes = table.Column<string>(nullable: true),
                     ServicedBefore = table.Column<bool>(nullable: true),
                     PreferredAppointmentDate = table.Column<DateTime>(nullable: false),
                     ServiceStart = table.Column<DateTime>(nullable: false),
-                    ServiceEnd = table.Column<DateTime>(nullable: false)
+                    ServiceEnd = table.Column<DateTime>(nullable: false),
+                    EstimatedCost = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -105,8 +106,7 @@ namespace Capstone.Migrations
                     LastName = table.Column<string>(nullable: true),
                     Email = table.Column<string>(nullable: true),
                     Phone = table.Column<string>(nullable: true),
-                    AddressId = table.Column<int>(nullable: false),
-                    TechnicianNotes = table.Column<string>(nullable: true)
+                    AddressId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -320,7 +320,9 @@ namespace Capstone.Migrations
                     AppointmentId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PianoId = table.Column<int>(nullable: false),
-                    IncludedServices = table.Column<string>(nullable: true),
+                    Latitude = table.Column<double>(nullable: false),
+                    Longitude = table.Column<double>(nullable: false),
+                    Services = table.Column<string>(nullable: true),
                     CustomerNotes = table.Column<string>(nullable: true),
                     TechnicianNotes = table.Column<string>(nullable: true),
                     ServiceStart = table.Column<DateTime>(nullable: false),
@@ -341,7 +343,7 @@ namespace Capstone.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "cacb9364-e1d0-44d4-8870-82c71691c716", "2039ff13-1714-4484-a8a8-f21b6da10ee4", "Admin", "ADMIN" });
+                values: new object[] { "9671e399-4ff2-4148-9106-29db23e7292b", "b0157da5-c3b6-453c-9d9e-ffe9c2c7c40b", "Admin", "ADMIN" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AppointmentBlocks_RuleSetId",
