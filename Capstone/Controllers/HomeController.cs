@@ -45,13 +45,13 @@ namespace Capstone.Controllers
         }
 
         [BindProperty]
-        public List<string> IncludedServices { get; set; }
+        public List<string> ChosenServices { get; set; }
         //[HttpPost]
         //[ValidateAntiForgeryToken]
         public async Task<IActionResult> ChooseAppointmentTime(PendingAppointment pendingAppointment)
         {
-            pendingAppointment.IncludedServices = string.Join(", ", IncludedServices.ToArray());
-            foreach(var includedService in IncludedServices)
+            pendingAppointment.Services = string.Join(", ", ChosenServices.ToArray());
+            foreach(var includedService in ChosenServices)
             {
                 foreach(var service in PianoServices.TuningServices)
                 {

@@ -32,7 +32,7 @@ namespace Capstone.ViewModels
         public double Longitude { get; set; }
 
         // Necessary Appointment Details
-        public string IncludedServices { get; set; }
+        public string Services { get; set; }
         public string CustomerNotes { get; set; }
         public DateTime ServiceStart { get; set; }
         public DateTime ServiceEnd { get; set; }

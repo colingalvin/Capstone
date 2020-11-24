@@ -20,7 +20,7 @@ namespace Capstone.Models
 
         public double Longitude { get; set; }
 
-        public string IncludedServices { get; set; }
+        public string Services { get; set; }
 
         [Display(Name = "Customer Notes")]
         public string CustomerNotes { get; set; }

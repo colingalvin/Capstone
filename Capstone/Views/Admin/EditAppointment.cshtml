@@ -1,0 +1,130 @@
+﻿@model Capstone.Models.Appointment
+
+@{
+    ViewData["Title"] = "EditAppointment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+    <h1>Edit Appointment</h1>
+    <hr />
+    <form asp-action="SaveAppointmentChanges">
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Appointment Information:</h3>
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <input type="hidden" asp-for="AppointmentId" />
+                <input type="hidden" asp-for="PianoId" />
+                <input type="hidden" asp-for="IsComplete" />
+                <input type="hidden" asp-for="Latitude" />
+                <input type="hidden" asp-for="Longitude" />
+                <input type="hidden" asp-for="Piano.PianoId" />
+                <input type="hidden" asp-for="Piano.ClientId" />
+                <input type="hidden" asp-for="Piano.LastService" />
+
+                <div class="form-group">
+                    <label asp-for="Services" class="control-label"></label>
+                    <input asp-for="Services" class="form-control" />
+                    <span asp-validation-for="Services" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="CustomerNotes" class="control-label"></label>
+                    <p>@Model.CustomerNotes</p>
+                    <input asp-for="CustomerNotes" class="form-control" />
+                    <span asp-validation-for="CustomerNotes" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Appointment Notes</label>
+                    <input asp-for="TechnicianNotes" class="form-control" />
+                    <span asp-validation-for="TechnicianNotes" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ServiceStart" class="control-label"></label>
+                    <input asp-for="ServiceStart" class="form-control" />
+                    <span asp-validation-for="ServiceStart" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ServiceEnd" class="control-label"></label>
+                    <input asp-for="ServiceEnd" class="form-control" />
+                    <span asp-validation-for="ServiceEnd" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Piano.Make" class="control-label"></label>
+                    <input asp-for="Piano.Make" class="form-control" />
+                    <span asp-validation-for="Piano.Make" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Piano.Configuration" class="control-label"></label>
+                    <input asp-for="Piano.Configuration" class="form-control" />
+                    <span asp-validation-for="Piano.Configuration" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Piano.Model" class="control-label"></label>
+                    <input asp-for="Piano.Model" class="form-control" />
+                    <span asp-validation-for="Piano.Model" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Piano Notes</label>
+                    <input asp-for="Piano.TechnicianNotes" class="form-control" />
+                    <span asp-validation-for="Piano.TechnicianNotes" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h3>Client Information:</h3>
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <input type="hidden" asp-for="Piano.Client.ClientId" />
+                <input type="hidden" asp-for="Piano.Client.AddressId" />
+                <input type="hidden" asp-for="Piano.Client.Address.AddressId" />
+                <input type="hidden" asp-for="Piano.Client.Address.Latitude" />
+                <input type="hidden" asp-for="Piano.Client.Address.Longitude" />
+
+                <div class="form-group">
+                    <label asp-for="Piano.Client.FirstName" class="control-label"></label>
+                    <input asp-for="Piano.Client.FirstName" class="form-control" />
+                    <span asp-validation-for="Piano.Client.FirstName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Piano.Client.LastName" class="control-label"></label>
+                    <input asp-for="Piano.Client.LastName" class="form-control" />
+                    <span asp-validation-for="Piano.Client.LastName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Piano.Client.Email" class="control-label"></label>
+                    <input asp-for="Piano.Client.Email" class="form-control" />
+                    <span asp-validation-for="Piano.Client.Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Piano.Client.Phone" class="control-label"></label>
+                    <input asp-for="Piano.Client.Phone" class="form-control" />
+                    <span asp-validation-for="Piano.Client.Phone" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Piano.Client.Address.StreetAddress" class="control-label"></label>
+                    <input asp-for="Piano.Client.Address.StreetAddress" class="form-control" />
+                    <span asp-validation-for="Piano.Client.Address.StreetAddress" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Piano.Client.Address.City" class="control-label"></label>
+                    <input asp-for="Piano.Client.Address.City" class="form-control" />
+                    <span asp-validation-for="Piano.Client.Address.City" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Piano.Client.Address.State" class="control-label"></label>
+                    <input asp-for="Piano.Client.Address.State" class="form-control" />
+                    <span asp-validation-for="Piano.Client.Address.State" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Piano.Client.Address.Zip" class="control-label"></label>
+                    <input asp-for="Piano.Client.Address.Zip" class="form-control" />
+                    <span asp-validation-for="Piano.Client.Address.Zip" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <input type="submit" value="Save Changes" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>

@@ -5,11 +5,25 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Pending Appointments</h1>
+<h1>Appointments Dashboard</h1>
 
 <p>
     <a asp-action="AllClients">Clients</a>
 </p>
+
+<h3>Completed Appointments:</h3>
+@foreach (var appointment in ViewBag.completedAppointments)
+{
+    <div class="row">
+        <div class="col-md-10">
+            <p>@appointment.Piano.Client.FirstName @appointment.Piano.Client.LastName (@appointment.Piano.Make @appointment.Piano.Configuration) - @appointment.ServiceStart</p>
+        </div>
+        <div class="col-md-2">
+            <a asp-action="CompleteAppointment" asp-route-id="@appointment.AppointmentId">Complete Appointment</a> |
+            <a asp-action="EditAppointment" asp-route-id="@appointment.AppointmentId">View/Edit</a>
+        </div>
+    </div>
+}
 <table class="table">
     <thead>
         <tr>
@@ -32,7 +46,7 @@
                 @Html.DisplayNameFor(model => model.PianoConfiguration)
             </th>
             <th>
-                @Html.DisplayName("Services")
+                @Html.DisplayNameFor(model => model.Services)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ServiceStart)
@@ -66,7 +80,7 @@
                     @Html.DisplayFor(modelItem => item.PianoConfiguration)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.IncludedServices)
+                    @Html.DisplayFor(modelItem => item.Services)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.ServiceStart)
@@ -82,14 +96,16 @@
     </tbody>
 </table>
 
-<h1>Today's Appointments</h1>
-@foreach (var appointment in (dynamic)ViewData["TodaysAppointments"])
+<h3>Today's Appointments:</h3>
+@foreach (var appointment in ViewBag.todaysAppointments)
 {
     <p>@appointment.ServiceStart - @appointment.CustomerNotes</p>
+    <a asp-action="EditAppointment" asp-route-id="@appointment.AppointmentId">View/Edit</a>
 }
 
-<h1>Upcoming Appointments</h1>
-@foreach (var appointment in (dynamic)ViewData["UpcomingAppointments"])
+<h3>Upcoming Appointments:</h3>
+@foreach (var appointment in ViewBag.upcomingAppointments)
 {
     <p>@appointment.ServiceStart - @appointment.CustomerNotes</p>
+    <a asp-action="EditAppointment" asp-route-id="@appointment.AppointmentId">View/Edit</a>
 }

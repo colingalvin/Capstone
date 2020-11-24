@@ -22,7 +22,7 @@
     <input type="hidden" asp-for="Longitude" />
     <input type="hidden" asp-for="PianoMake" />
     <input type="hidden" asp-for="PianoConfiguration" />
-    <input type="hidden" asp-for="IncludedServices" />
+    <input type="hidden" asp-for="Services" />
     <input type="hidden" asp-for="EstimatedDuration" />
     <input type="hidden" asp-for="CustomerNotes" />
     <input type="hidden" asp-for="ServicedBefore" />
@@ -40,7 +40,7 @@
     <div id="map" style="height: 400px; width: 100%;"></div>
     <br />
     <p>Piano: @Model.PianoMake @Model.PianoConfiguration</p>
-    <p>Included Services: @Model.IncludedServices</p>
+    <p>Included Services: @Model.Services</p>
     <p>Estimated Duration: @Model.EstimatedDuration min.</p>
     <p>Notes: @Model.CustomerNotes</p>
     <p>Available Appointments:</p>

@@ -25,8 +25,9 @@ namespace Capstone.Controllers
         {
             var pendingAppointments = _context.PendingAppointments.ToList();
 
-            ViewData["TodaysAppointments"] = _context.Appointments.Where(a => a.ServiceStart.Date == DateTime.Now.Date).ToList();
-            ViewData["UpcomingAppointments"] = _context.Appointments.Where(a => a.ServiceStart.Date > DateTime.Now.Date).ToList();
+            ViewBag.completedAppointments = _context.Appointments.Include(a => a.Piano.Client).Where(a => (a.ServiceEnd < DateTime.Now) && (a.IsComplete == false)).ToList();
+            ViewBag.todaysAppointments = _context.Appointments.Where(a => a.ServiceStart.Date == DateTime.Now.Date).ToList();
+            ViewBag.upcomingAppointments = _context.Appointments.Where(a => a.ServiceStart.Date > DateTime.Now.Date).ToList();
 
             return View(pendingAppointments);
         }
@@ -48,6 +49,33 @@ namespace Capstone.Controllers
             var chosenClient = _context.Clients.Include(c => c.Address).Where(c => c.ClientId == id).SingleOrDefault();
             ViewBag.pianos = _context.Pianos.Where(p => p.ClientId == chosenClient.ClientId);
             return View(chosenClient);
+        }
+
+        public ActionResult CompleteAppointment(int id)
+        {
+            var appointment = _context.Appointments.Where(a => a.AppointmentId == id).SingleOrDefault();
+            appointment.IsComplete = true;
+            _context.Appointments.Update(appointment);
+            _context.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult EditAppointment(int id)
+        {
+            var appointment = _context.Appointments.Include(a => a.Piano.Client.Address).Where(a => a.AppointmentId == id).SingleOrDefault();
+            return View(appointment);
+        }
+
+        public async Task<ActionResult> SaveAppointmentChanges(Appointment alteredAppointment)
+        {
+            _context.Appointments.Update(alteredAppointment);
+            _context.Pianos.Update(alteredAppointment.Piano);
+            _context.Clients.Update(alteredAppointment.Piano.Client);
+            _context.Addresses.Update(alteredAppointment.Piano.Client.Address);
+            _context.SaveChanges();
+
+            // logic to update appointment, piano, client, and address information
+            return RedirectToAction("Index");
         }
 
         public ActionResult EditRuleSet(int? id)
@@ -243,7 +271,7 @@ namespace Capstone.Controllers
                 City = appointment.City,
                 State = appointment.State,
                 Zip = appointment.Zip,
-                IncludedServices = appointment.IncludedServices,
+                Services = appointment.Services,
                 CustomerNotes = appointment.CustomerNotes,
                 ServiceStart = appointment.ServiceStart,
                 ServiceEnd = appointment.ServiceEnd,
@@ -325,7 +353,7 @@ namespace Capstone.Controllers
             {
                 PianoId = pianoId,
                 Piano = _context.Pianos.Where(p => p.PianoId == pianoId).SingleOrDefault(),
-                IncludedServices = model.IncludedServices,
+                Services = model.Services.ToString(),
                 CustomerNotes = model.CustomerNotes,
                 ServiceStart = model.ServiceStart,
                 ServiceEnd = model.ServiceEnd,

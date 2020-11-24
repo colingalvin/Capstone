@@ -38,7 +38,7 @@ namespace Capstone.Models
         public string PianoConfiguration { get; set; }
 
         [Display(Name = "Choose Services")]
-        public string IncludedServices { get; set; }
+        public string Services { get; set; }
 
         [Display(Name = "Estimated Duration")]
         public int EstimatedDuration { get; set; }

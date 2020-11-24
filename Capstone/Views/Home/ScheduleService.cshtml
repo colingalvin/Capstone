@@ -61,12 +61,12 @@
                 <span asp-validation-for="PianoConfiguration" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="IncludedServices" class="control-label"></label>
+                <label asp-for="Services" class="control-label"></label>
                 <h4>Tuning Services:</h4>
                 @foreach (var service in PianoServices.TuningServices)
                 {
                     <br />
-                    <input name="IncludedServices" type="radio" value="@service.Name" id="@service.Time">
+                    <input name="ChosenServices" type="radio" value="@service.Name" id="@service.Time">
                     <label class="form-check-label" for="@service.Name">
                         @service.Name
                     </label>
@@ -75,7 +75,7 @@
                 @foreach (var service in PianoServices.RepairServices)
                 {
                     <br />
-                    <input name="IncludedServices" type="checkbox" value="@service.Name" id="@service.Time">
+                    <input name="ChosenServices" type="checkbox" value="@service.Name" id="@service.Time">
                     <label class="form-check-label" for="@service.Name">
                         @service.Name
                     </label>
@@ -84,12 +84,12 @@
                 @foreach (var service in PianoServices.CleaningServices)
                 {
                     <br />
-                    <input name="IncludedServices" type="checkbox" value="@service.Name" id="@service.Time">
+                    <input name="ChosenServices" type="checkbox" value="@service.Name" id="@service.Time">
                     <label class="form-check-label" for="@service.Name">
                         @service.Name
                     </label>
                 }
-                <span asp-validation-for="IncludedServices" class="text-danger"></span>
+                <span asp-validation-for="Services" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="CustomerNotes" class="control-label"></label>

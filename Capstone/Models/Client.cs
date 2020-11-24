@@ -25,6 +25,5 @@ namespace Capstone.Models
         [ForeignKey("Address")]
         public int AddressId { get; set; }
         public Address Address { get; set; }
-        public string TechnicianNotes { get; set; }
     }
 }
