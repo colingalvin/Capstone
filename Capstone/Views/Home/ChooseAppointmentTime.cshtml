@@ -4,6 +4,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+
+
 <h1>Choose Appointment Time</h1>
 
 <form asp-action="ConfirmRequest">
@@ -25,7 +27,6 @@
     <input type="hidden" asp-for="CustomerNotes" />
     <input type="hidden" asp-for="ServicedBefore" />
     <input type="hidden" asp-for="PreferredAppointmentDate" />
-    @*<input type="hidden" asp-for="ServiceStart" />*@
     <input type="hidden" asp-for="ServiceEnd" />
 
 
@@ -36,8 +37,8 @@
     <p>Address:
     <p>@Model.StreetAddress</p>
     <p>@Model.City, @Model.State  @Model.Zip</p>
-    <p>Insert Google Map here</p>
-    </p>
+    <div id="map" style="height: 400px; width: 100%;"></div>
+    <br />
     <p>Piano: @Model.PianoMake @Model.PianoConfiguration</p>
     <p>Included Services: @Model.IncludedServices</p>
     <p>Estimated Duration: @Model.EstimatedDuration min.</p>
@@ -47,8 +48,24 @@
     {
         <input asp-for="ServiceStart" value="@item" type="radio">@item.ToString("ddd, MMM dd hh:mm tt")<br />
     }
-
+    <br />
     <div class="form-group">
         <input type="submit" value="Submit Service Request" class="btn btn-primary" />
     </div>
 </form>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=@ApiKeys.googleApiKey&callback=initMap&libraries=&v=weekly"defer></script>
+<script>
+    let map;
+    function initMap() {
+        const customerAddress = { lat: @Model.Latitude, lng: @Model.Longitude };
+        map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 15,
+            center: customerAddress,
+        });
+        new google.maps.Marker({
+            position: customerAddress,
+            map: map,
+        });
+    }
+</script>
