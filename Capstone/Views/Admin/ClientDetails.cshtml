@@ -1,0 +1,78 @@
+﻿@model Capstone.Models.Client
+
+@{
+    ViewData["Title"] = "ClientDetails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>ClientDetails</h1>
+
+<div>
+    <h4>Client</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.FirstName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FirstName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.LastName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Phone)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Phone)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Address)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Address.StreetAddress) <br />
+            @Html.DisplayFor(model => model.Address.City),
+            @Html.DisplayFor(model => model.Address.State)
+            @Html.DisplayFor(model => model.Address.Zip)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.TechnicianNotes)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TechnicianNotes)
+        </dd>
+        <dt class = "col-sm-2">Pianos:</dt>
+        @foreach(var piano in ViewBag.pianos)
+        {
+            <dd class="col-sm-10">
+                <p>@piano.Make @piano.Configuration</p>
+                @if (piano.Model != null)
+                {
+                    <p>Model: @piano.Model</p>
+                }
+                @if (piano.LastService == null)
+                {
+                    <p>Last Service: @piano.LastService</p>
+                }
+                else
+                {
+                    <p>No Service History</p>
+                }
+                <p>Notes: @piano.TechnicianNotes</p>
+            </dd>
+        }
+    </dl>
+</div>
+<div>
+    <a asp-action="EditClient" asp-route-id="@Model.ClientId">Edit</a> |
+    <a asp-action="Index">Home</a>
+</div>

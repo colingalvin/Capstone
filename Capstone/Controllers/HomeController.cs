@@ -82,8 +82,7 @@ namespace Capstone.Controllers
             // Geocode address
             pendingAppointment = await _google.GeocodeAddress(pendingAppointment);
 
-            List<DateTime> availableAppointments = new List<DateTime>();
-            ViewBag.availableAppointments = await GetAppointments(pendingAppointment, availableAppointments);
+            ViewBag.availableAppointments = await GetAppointments(pendingAppointment);
             
             // Logic for checking database for available appointments
             // Bind appointments to ViewBag
@@ -106,8 +105,10 @@ namespace Capstone.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        private async Task<List<DateTime>> GetAppointments(PendingAppointment pendingAppointment, List<DateTime> availableAppointments)
+        private async Task<List<DateTime>> GetAppointments(PendingAppointment pendingAppointment)
         {
+            List<DateTime> availableAppointments = new List<DateTime>();
+
             // Start with preferred appointment day
             DateTime currentDay = pendingAppointment.PreferredAppointmentDate;
 

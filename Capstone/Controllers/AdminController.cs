@@ -31,9 +31,23 @@ namespace Capstone.Controllers
             return View(pendingAppointments);
         }
 
-        public ActionResult Clients()
+        public ActionResult AllClients()
         {
-            return View();
+            var clients = _context.Clients.ToList();
+            return View(clients);
+        }
+
+        public ActionResult EditClient(int id)
+        {
+            var chosenClient = _context.Clients.Include(c => c.Address).Where(c => c.ClientId == id).SingleOrDefault();
+            return View(chosenClient);
+        }
+
+        public ActionResult ClientDetails(int id)
+        {
+            var chosenClient = _context.Clients.Include(c => c.Address).Where(c => c.ClientId == id).SingleOrDefault();
+            ViewBag.pianos = _context.Pianos.Where(p => p.ClientId == chosenClient.ClientId);
+            return View(chosenClient);
         }
 
         public ActionResult EditRuleSet(int? id)
