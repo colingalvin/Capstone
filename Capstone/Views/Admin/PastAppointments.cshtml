@@ -1,0 +1,78 @@
+﻿@model IEnumerable<Capstone.Models.Appointment>
+
+@{
+    ViewData["Title"] = "PastAppointments";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>PastAppointments</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Client:
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Piano)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Services)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CustomerNotes)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TechnicianNotes)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ServiceStart)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ServiceEnd)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Piano.Client.FirstName)
+                @Html.DisplayFor(modelItem => item.Piano.Client.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Piano.Make) 
+                @if (item.Piano.Model != null)
+                {
+                    @Html.DisplayFor(modelItem => item.Piano.Model)
+                }
+                else
+                {
+                    @Html.DisplayFor(modelItem => item.Piano.Configuration) 
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Services)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CustomerNotes)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TechnicianNotes)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ServiceStart)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ServiceEnd)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.AppointmentId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.AppointmentId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.AppointmentId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

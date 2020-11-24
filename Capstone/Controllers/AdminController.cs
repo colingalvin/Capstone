@@ -38,6 +38,12 @@ namespace Capstone.Controllers
             return View(clients);
         }
 
+        public ActionResult PastAppointments()
+        {
+            var appointments = _context.Appointments.Include(a => a.Piano.Client.Address).Where(a => a.IsComplete == true).OrderByDescending(a => a.ServiceEnd).ToList();
+            return View(appointments);
+        }
+
         public ActionResult EditClient(int id)
         {
             var chosenClient = _context.Clients.Include(c => c.Address).Where(c => c.ClientId == id).SingleOrDefault();
