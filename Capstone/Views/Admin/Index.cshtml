@@ -5,108 +5,91 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Appointments Dashboard</h1>
-
-<p>
-    <a asp-action="AllClients">Clients</a>
-    <a asp-action="PastAppointments">Service History</a>
-</p>
-
-<h3>Completed Appointments:</h3>
-@foreach (var appointment in ViewBag.completedAppointments)
-{
-    <div class="row">
-        <div class="col-md-10">
-            <p>@appointment.Piano.Client.FirstName @appointment.Piano.Client.LastName (@appointment.Piano.Make @appointment.Piano.Configuration) - @appointment.ServiceStart</p>
-        </div>
-        <div class="col-md-2">
-            <a asp-action="CompleteAppointment" asp-route-id="@appointment.AppointmentId">Complete Appointment</a> |
-            <a asp-action="EditAppointment" asp-route-id="@appointment.AppointmentId">View/Edit</a>
-        </div>
-    </div>
-}
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StreetAddress)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.City)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PianoMake)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PianoConfiguration)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Services)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ServiceStart)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EstimatedDuration)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+<div class="row">
+    <div class="col-lg-6">
+        @if (ViewBag.completedAppointments == null)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FirstName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LastName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StreetAddress)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.City)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PianoMake)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PianoConfiguration)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Services)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ServiceStart)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EstimatedDuration)
-                </td>
-                <td>
-                    <a asp-action="PendingAppointmentDetails" asp-route-id="@item.PendingAppointmentId">View Details</a>
-                </td>
-            </tr>
+            <p>You have no completed appointments to review.</p>
         }
-    </tbody>
-</table>
-
-<h3>Today's Appointments:</h3>
-@foreach (var appointment in ViewBag.todaysAppointments)
-{
-    <p>@appointment.ServiceStart - @appointment.CustomerNotes</p>
-    <a asp-action="EditAppointment" asp-route-id="@appointment.AppointmentId">View/Edit</a>
-}
-
-<h3>Upcoming Appointments:</h3>
-@foreach (var appointment in ViewBag.upcomingAppointments)
-{
-    <p>@appointment.ServiceStart - @appointment.CustomerNotes</p>
-    <a asp-action="EditAppointment" asp-route-id="@appointment.AppointmentId">View/Edit</a>
-}
+        else
+        {
+            <div class="row">
+                <h4>Completed Appointments:</h4><br />
+                @foreach (var appointment in ViewBag.completedAppointments)
+                {
+                    <div class="col-lg-8">
+                        <p>@appointment.Piano.Client.FirstName @appointment.Piano.Client.LastName (@appointment.Piano.Make @appointment.Piano.Configuration) - @appointment.ServiceStart</p>
+                    </div>
+                    <div class="col-lg-4">
+                        <a asp-action="CompleteAppointment" asp-route-id="@appointment.AppointmentId">Complete Appointment</a> |
+                        <a asp-action="EditAppointment" asp-route-id="@appointment.AppointmentId">View/Edit</a>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+    <div class="col-lg-6">
+        <h4>Pending Appointments:</h4><br /><br />
+        <h5>Today's Appointments:</h5>
+        @if (ViewBag.todaysAppointments == null)
+        {
+            <p>You have no appointments schedule for today.</p>
+        }
+        else
+        {
+            <table>
+                <tbody>
+                    @foreach (var appointment in ViewBag.todaysAppointments)
+                    {
+                        <tr>
+                            <td>
+                                @appointment.Piano.Client.FirstName @appointment.Piano.Client.LastName
+                            </td>
+                            <td>
+                                @appointment.Piano.Make @appointment.Piano.Configuration
+                            </td>
+                            <td>
+                                @*Need formatting here*@
+                                @appointment.ServiceStart.TimeOfDay
+                            </td>
+                            <td>
+                                <a asp-action="EditAppointment" asp-route-id="@appointment.AppointmentId">View/Edit</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        <br /><br />
+        <h5>7 Day Appointment Outlook:</h5>
+        @if (ViewBag.nextSevenDaysAppointments == null)
+        {
+            <p>You have no appointments scheduled for the next week.</p>
+        }
+        else
+        {
+            <table>
+                <tbody>
+                    @foreach (var appointment in ViewBag.nextSevenDaysAppointments)
+                    {
+                        <tr>
+                            <td>
+                                @appointment.Piano.Client.FirstName @appointment.Piano.Client.LastName
+                            </td>
+                            <td>
+                                @appointment.Piano.Make @appointment.Piano.Configuration
+                            </td>
+                            <td>
+                                @*Need formatting here*@
+                                @appointment.ServiceStart.TimeOfDay
+                            </td>
+                            <td>
+                                <a asp-action="EditAppointment" asp-route-id="@appointment.AppointmentId">View/Edit</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>

@@ -29,10 +29,9 @@ namespace Capstone.Controllers
             CheckForReminderEmails();
             var pendingAppointments = _context.PendingAppointments.ToList();
 
-            ViewBag.completedAppointments = _context.Appointments.Include(a => a.Piano.Client).Where(a => (a.ServiceEnd < DateTime.Now) && (a.IsComplete == false)).ToList();
-            ViewBag.todaysAppointments = _context.Appointments.Where(a => a.ServiceStart.Date == DateTime.Now.Date).ToList();
-            ViewBag.upcomingAppointments = _context.Appointments.Where(a => a.ServiceStart.Date > DateTime.Now.Date).ToList();
-
+            ViewBag.completedAppointments = _context.Appointments.Include(a => a.Piano.Client.Address).Where(a => (a.ServiceEnd < DateTime.Now) && (a.IsComplete == false)).ToList();
+            ViewBag.todaysAppointments = _context.Appointments.Include(a => a.Piano.Client.Address).Where(a => a.ServiceStart.Date == DateTime.Now.Date).ToList();
+            ViewBag.nextSevenDaysAppointments = _context.Appointments.Include(a => a.Piano.Client.Address).Where(a => (a.ServiceStart.Date > DateTime.Now) && (a.ServiceStart.Date < DateTime.Now.AddDays(7).Date)).OrderBy(a => a.ServiceStart).ToList();
             return View(pendingAppointments);
         }
 
