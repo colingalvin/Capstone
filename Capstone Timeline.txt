@@ -53,3 +53,21 @@ Things to fix:
 -ASP.NET redirecting to login page after trying to access admin controller without proper credentials
 -ERD - remove CustomerId FK reference from Appointments table
 -Fix appointment services
+
+User Stories:
+1
+2
+3 X
+4 X
+5 X
+6 X
+7
+8
+9
+10
+11 X
+12 X
+13
+14 X
+15
+16

@@ -100,7 +100,7 @@ namespace Capstone.Controllers
             pendingAppointment.ServiceEnd = pendingAppointment.ServiceStart + duration;
             _context.PendingAppointments.Add(pendingAppointment);
             _context.SaveChanges();
-            _mailKit.ConfirmAppointmentRequest(pendingAppointment);
+            _mailKit.SendAppointmentRequestEmail(pendingAppointment);
 
             return View(pendingAppointment);
         }

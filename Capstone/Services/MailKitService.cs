@@ -11,7 +11,7 @@ namespace Capstone.Services
 {
     public class MailKitService
     {
-        public void ConfirmAppointmentRequest(PendingAppointment pendingAppointment)
+        public void SendAppointmentRequestEmail(PendingAppointment pendingAppointment)
         {
             var email = new MimeMessage();
             email.From.Add(MailboxAddress.Parse("wehmeiermusic@gmail.com"));
@@ -30,9 +30,53 @@ namespace Capstone.Services
                 $"\t\t*repair services are billed at an hourly rate depending on severity of repair - final cost determined at time of service\n" +
                 $"\tAccepted Payments: Cash, Check (made payable to Wehmeier Music Service)\n\n" +
                 $"Thank you for your business!\n" +
-                $"\t-Keith Wehmeier"
+                $"\t-Keith Wehmeier, Wehmeier Music Service"
             };
+            SendEmail(email);
+        }
 
+        public void SendAppointmentConfirmEmail(Appointment appointment)
+        {
+            var email = new MimeMessage();
+            email.From.Add(MailboxAddress.Parse("wehmeiermusic@gmail.com"));
+            email.To.Add(MailboxAddress.Parse($"{appointment.Piano.Client.Email}"));
+            email.Subject = "Appointment Confirmation";
+            email.Body = new TextPart("plain")
+            {
+                Text = $"Dear {appointment.Piano.Client.FirstName},\n\n" +
+                $"Your piano service request has been confirmed. Find the details of your appointment below:" +
+                $"\tTime: {appointment.ServiceStart} - {appointment.ServiceEnd.TimeOfDay}\n" +
+                $"\tServices: {appointment.Services}\n" +
+                $"\tEstimated Cost: ${appointment.EstimatedCost}*\n" +
+                $"\t\t*repair services are billed at an hourly rate depending on severity of repair - final cost determined at time of service\n" +
+                $"\tAccepted Payments: Cash, Check (made payable to Wehmeier Music Service)\n\n" +
+                $"In the event that you need to change your service details, please contact us at wehmeiermusicservice@gmail.com.\n" +
+                $"Thank you for your business!\n" +
+                $"\t-Keith Wehmeier, Wehmeier Music Service"
+            };
+            SendEmail(email);
+        }
+
+        public void SendServiceRemindEmail(Piano piano)
+        {
+            var email = new MimeMessage();
+            email.From.Add(MailboxAddress.Parse("wehmeiermusic@gmail.com"));
+            email.To.Add(MailboxAddress.Parse($"{piano.Client.Email}"));
+            email.Subject = "Regular Service Reminder";
+            email.Body = new TextPart("plain")
+            {
+                Text = $"Dear {piano.Client.FirstName},\n\n" +
+                $"Our records show that your {piano.Make} {piano.Configuration} was last serviced by WMS on {piano.LastService?.Date.ToString("d")}. " +
+                $"In order to maximize the longevity and playability of your instrument, we recommend that pianos be serviced once a year. " +
+                $"Please visit us at wehmeiermusicservice.com to schedule your regular service appointment today!\n\n" +
+                $"Thank you for your business!\n" +
+                $"\t-Keith Wehmeier, Wehmeier Music Service"
+            };
+            SendEmail(email);
+        }
+
+        private void SendEmail(MimeMessage email)
+        {
             using (var client = new SmtpClient())
             {
                 client.Connect("smtp.gmail.com", 465, true);
@@ -41,6 +85,5 @@ namespace Capstone.Services
                 client.Disconnect(true);
             }
         }
-
     }
 }

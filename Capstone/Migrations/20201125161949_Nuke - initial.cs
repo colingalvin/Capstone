@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Capstone.Migrations
 {
-    public partial class NukeInitial : Migration
+    public partial class Nukeinitial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -258,6 +258,8 @@ namespace Capstone.Migrations
                     Configuration = table.Column<string>(nullable: true),
                     Model = table.Column<string>(nullable: true),
                     LastService = table.Column<DateTime>(nullable: true),
+                    RemindForService = table.Column<DateTime>(nullable: true),
+                    Reminded = table.Column<bool>(nullable: false),
                     TechnicianNotes = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -323,6 +325,7 @@ namespace Capstone.Migrations
                     Latitude = table.Column<double>(nullable: false),
                     Longitude = table.Column<double>(nullable: false),
                     Services = table.Column<string>(nullable: true),
+                    EstimatedCost = table.Column<int>(nullable: false),
                     CustomerNotes = table.Column<string>(nullable: true),
                     TechnicianNotes = table.Column<string>(nullable: true),
                     ServiceStart = table.Column<DateTime>(nullable: false),
@@ -343,7 +346,7 @@ namespace Capstone.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "9671e399-4ff2-4148-9106-29db23e7292b", "b0157da5-c3b6-453c-9d9e-ffe9c2c7c40b", "Admin", "ADMIN" });
+                values: new object[] { "e19c6947-4506-49de-8d9b-138e07c803ca", "92c5c954-5ef9-44c6-85c1-131004f6df09", "Admin", "ADMIN" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AppointmentBlocks_RuleSetId",

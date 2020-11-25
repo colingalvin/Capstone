@@ -36,5 +36,6 @@ namespace Capstone.ViewModels
         public string CustomerNotes { get; set; }
         public DateTime ServiceStart { get; set; }
         public DateTime ServiceEnd { get; set; }
+        public int EstimatedCost { get; set; }
     }
 }

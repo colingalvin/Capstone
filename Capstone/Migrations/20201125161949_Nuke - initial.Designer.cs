@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Capstone.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201124212732_Nuke - Initial")]
-    partial class NukeInitial
+    [Migration("20201125161949_Nuke - initial")]
+    partial class Nukeinitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -60,6 +60,9 @@ namespace Capstone.Migrations
 
                     b.Property<string>("CustomerNotes")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EstimatedCost")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsComplete")
                         .HasColumnType("bit");
@@ -261,6 +264,12 @@ namespace Capstone.Migrations
                     b.Property<string>("Model")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("RemindForService")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Reminded")
+                        .HasColumnType("bit");
+
                     b.Property<string>("TechnicianNotes")
                         .HasColumnType("nvarchar(max)");
 
@@ -326,8 +335,8 @@ namespace Capstone.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "9671e399-4ff2-4148-9106-29db23e7292b",
-                            ConcurrencyStamp = "b0157da5-c3b6-453c-9d9e-ffe9c2c7c40b",
+                            Id = "e19c6947-4506-49de-8d9b-138e07c803ca",
+                            ConcurrencyStamp = "92c5c954-5ef9-44c6-85c1-131004f6df09",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });

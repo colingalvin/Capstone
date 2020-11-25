@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Capstone.Data;
 using Capstone.Models;
+using Capstone.Services;
 using Capstone.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -16,13 +17,16 @@ namespace Capstone.Controllers
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _context;
+        public MailKitService _mailKitService;
 
-        public AdminController(ApplicationDbContext context)
+        public AdminController(ApplicationDbContext context, MailKitService mailKitService)
         {
             _context = context;
+            _mailKitService = mailKitService;
         }
         public ActionResult Index()
         {
+            CheckForReminderEmails();
             var pendingAppointments = _context.PendingAppointments.ToList();
 
             ViewBag.completedAppointments = _context.Appointments.Include(a => a.Piano.Client).Where(a => (a.ServiceEnd < DateTime.Now) && (a.IsComplete == false)).ToList();
@@ -57,11 +61,16 @@ namespace Capstone.Controllers
             return View(chosenClient);
         }
 
-        public ActionResult CompleteAppointment(int id)
+        public async Task<ActionResult> CompleteAppointment(int id)
         {
-            var appointment = _context.Appointments.Where(a => a.AppointmentId == id).SingleOrDefault();
+            var appointment = await _context.Appointments.Where(a => a.AppointmentId == id).SingleOrDefaultAsync();
+            var piano = await _context.Pianos.Where(p => p.PianoId == appointment.PianoId).SingleOrDefaultAsync();
             appointment.IsComplete = true;
+            piano.LastService = appointment.ServiceStart.Date;
+            piano.RemindForService = piano.LastService + new TimeSpan(365, 0, 0, 0);
+            piano.Reminded = false;
             _context.Appointments.Update(appointment);
+            _context.Pianos.Update(piano);
             _context.SaveChanges();
             return RedirectToAction("Index");
         }
@@ -72,7 +81,7 @@ namespace Capstone.Controllers
             return View(appointment);
         }
 
-        public async Task<ActionResult> SaveAppointmentChanges(Appointment alteredAppointment)
+        public ActionResult SaveAppointmentChanges(Appointment alteredAppointment)
         {
             _context.Appointments.Update(alteredAppointment);
             _context.Pianos.Update(alteredAppointment.Piano);
@@ -282,7 +291,8 @@ namespace Capstone.Controllers
                 ServiceStart = appointment.ServiceStart,
                 ServiceEnd = appointment.ServiceEnd,
                 Latitude = appointment.Latitude,
-                Longitude = appointment.Longitude
+                Longitude = appointment.Longitude,
+                EstimatedCost = appointment.EstimatedCost
             };
 
             var matchingClients = _context.Clients.Include(c => c.Address).Where(c => (c.FirstName == appointment.FirstName) && (c.LastName == appointment.LastName)).ToList();
@@ -364,13 +374,30 @@ namespace Capstone.Controllers
                 ServiceStart = model.ServiceStart,
                 ServiceEnd = model.ServiceEnd,
                 Latitude = model.Latitude,
-                Longitude = model.Longitude
+                Longitude = model.Longitude,
+                EstimatedCost = model.EstimatedCost
             };
 
             _context.Appointments.Add(appointment);
             _context.PendingAppointments.Remove(_context.PendingAppointments.Where(pa => pa.PendingAppointmentId == model.PendingAppointmentId).SingleOrDefault());
             _context.SaveChanges();
+            _mailKitService.SendAppointmentConfirmEmail(_context.Appointments.Include(a => a.Piano.Client.Address).Where(a => a.AppointmentId == appointment.AppointmentId).SingleOrDefault());
             return RedirectToAction("Index");
+        }
+
+        public void CheckForReminderEmails()
+        {
+            var pianos = _context.Pianos.Include(p => p.Client).Where(p => p.RemindForService <= DateTime.Today.Date).ToList();
+            foreach (Piano piano in pianos)
+            {
+                if (!piano.Reminded)
+                {
+                    _mailKitService.SendServiceRemindEmail(piano);
+                    piano.Reminded = true;
+                    _context.Update(piano);
+                }
+            }
+            _context.SaveChanges();
         }
     }
 }

@@ -22,6 +22,10 @@ namespace Capstone.Models
 
         public string Services { get; set; }
 
+        [Display(Name = "Estimated Cost")]
+        [DataType(DataType.Currency)]
+        public int EstimatedCost { get; set; }
+
         [Display(Name = "Customer Notes")]
         public string CustomerNotes { get; set; }
 

@@ -23,6 +23,11 @@ namespace Capstone.Models
         [DataType(DataType.Date)]
         public DateTime? LastService { get; set; }
 
+        [DataType(DataType.Date)]
+        public DateTime? RemindForService { get; set; }
+
+        public bool Reminded { get; set; }
+
         [Display(Name = "Technician Notes")]
         public string TechnicianNotes { get; set; }
     }
