@@ -14,10 +14,13 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.FirstName)
+                Name
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LastName)
+                Pianos
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Address)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Email)
@@ -32,10 +35,14 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
+                @Html.DisplayFor(modelItem => item.FirstName) @Html.DisplayFor(modelItem => item.LastName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.LastName)
+               List pianos here
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Address.StreetAddress)<br />
+                @Html.DisplayFor(modelItem => item.Address.City), @Html.DisplayFor(modelItem => item.Address.State)  @Html.DisplayFor(modelItem => item.Address.Zip)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Email)
@@ -45,8 +52,7 @@
             </td>
             <td>
                 <a asp-action="EditClient" asp-route-id="@item.ClientId">Edit</a> |
-                <a asp-action="ClientDetails" asp-route-id="@item.ClientId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ClientId">Delete</a>
+                <a asp-action="ServiceHistory" asp-route-id="@item.ClientId">Service History</a>
             </td>
         </tr>
 }

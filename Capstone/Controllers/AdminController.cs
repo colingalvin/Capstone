@@ -37,7 +37,7 @@ namespace Capstone.Controllers
 
         public ActionResult AllClients()
         {
-            var clients = _context.Clients.ToList();
+            var clients = _context.Clients.Include(c => c.Address).ToList();
             return View(clients);
         }
 
