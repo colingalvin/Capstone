@@ -127,7 +127,7 @@ namespace Capstone.Controllers
             }
             else
             {
-                ruleSet = new CreateNewRuleSetViewModel();
+                ruleSet = new CreateNewRuleSetViewModel() { StartDate = DateTime.Today };
             }
             return View(ruleSet);
         }
@@ -387,8 +387,8 @@ namespace Capstone.Controllers
 
         public void CheckForReminderEmails()
         {
-            var pianos = _context.Pianos.Include(p => p.Client).Where(p => p.RemindForService <= DateTime.Today.Date).ToList();
-            foreach (Piano piano in pianos)
+            var pianosDueForService = _context.Pianos.Include(p => p.Client).Where(p => p.RemindForService <= DateTime.Today.Date).ToList();
+            foreach (Piano piano in pianosDueForService)
             {
                 if (!piano.Reminded)
                 {
@@ -398,6 +398,11 @@ namespace Capstone.Controllers
                 }
             }
             _context.SaveChanges();
+            var upcomingAppointments = _context.Appointments.Include(a => a.Piano.Client.Address).Where(a => a.ServiceStart.Date == DateTime.Today.AddDays(1).Date).ToList();
+            foreach (Appointment appointment in upcomingAppointments)
+            {
+                _mailKitService.SendUpcomingServiceEmail(appointment);
+            }
         }
     }
 }

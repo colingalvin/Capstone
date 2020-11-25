@@ -26,7 +26,7 @@ namespace Capstone.Services
                 $"Appointment Details:\n" +
                 $"\tRequested Time: {pendingAppointment.ServiceStart}\n" +
                 $"\tServices Requested: {pendingAppointment.Services}\n" +
-                $"\tEstimated Cost: ${pendingAppointment.EstimatedCost}*\n" +
+                $"\tEstimated Cost: {pendingAppointment.EstimatedCost:C}*\n" +
                 $"\t\t*repair services are billed at an hourly rate depending on severity of repair - final cost determined at time of service\n" +
                 $"\tAccepted Payments: Cash, Check (made payable to Wehmeier Music Service)\n\n" +
                 $"Thank you for your business!\n" +
@@ -47,10 +47,10 @@ namespace Capstone.Services
                 $"Your piano service request has been confirmed. Find the details of your appointment below:" +
                 $"\tTime: {appointment.ServiceStart} - {appointment.ServiceEnd.TimeOfDay}\n" +
                 $"\tServices: {appointment.Services}\n" +
-                $"\tEstimated Cost: ${appointment.EstimatedCost}*\n" +
+                $"\tEstimated Cost: {appointment.EstimatedCost:C}*\n" +
                 $"\t\t*repair services are billed at an hourly rate depending on severity of repair - final cost determined at time of service\n" +
-                $"\tAccepted Payments: Cash, Check (made payable to Wehmeier Music Service)\n\n" +
-                $"In the event that you need to change your service details, please contact us at wehmeiermusicservice@gmail.com.\n" +
+                $"\tAccepted Payments: Cash, Check (made payable to Wehmeier Music Service), Venmo, Apple Pay\n\n" +
+                $"In the event that you need to change your service details, please contact us at wehmeiermusicservice@gmail.com.\n\n" +
                 $"Thank you for your business!\n" +
                 $"\t-Keith Wehmeier, Wehmeier Music Service"
             };
@@ -69,6 +69,25 @@ namespace Capstone.Services
                 $"Our records show that your {piano.Make} {piano.Configuration} was last serviced by WMS on {piano.LastService?.Date.ToString("d")}. " +
                 $"In order to maximize the longevity and playability of your instrument, we recommend that pianos be serviced once a year. " +
                 $"Please visit us at wehmeiermusicservice.com to schedule your regular service appointment today!\n\n" +
+                $"Thank you for your business!\n" +
+                $"\t-Keith Wehmeier, Wehmeier Music Service"
+            };
+            SendEmail(email);
+        }
+
+        public void SendUpcomingServiceEmail(Appointment appointment)
+        {
+            var email = new MimeMessage();
+            email.From.Add(MailboxAddress.Parse("wehmeiermusic@gmail.com"));
+            email.To.Add(MailboxAddress.Parse($"{appointment.Piano.Client.Email}"));
+            email.Subject = $"Appointment Reminder: {appointment.Piano.Make} {appointment.Piano.Configuration}";
+            email.Body = new TextPart("plain")
+            {
+                Text = $"Dear {appointment.Piano.Client.FirstName},\n\n" +
+                $"This is a reminder for your scheduled piano service tomorrow from {appointment.ServiceStart.TimeOfDay:t} to {appointment.ServiceEnd.TimeOfDay:t}. " +
+                $"The expected cost of your service is {appointment.EstimatedCost:C}, though any repair services needed will be billed at an hourly rate upon completion. " +
+                $"Please have an acceptable form of payment (Cash, Check, Venmo, or Apple Pay) ready at time of service. " +
+                $"In the event that you need to change or cancel your service, please contact us as soon as possible at wehmeiermusicservice@gmail.com.\n\n" +
                 $"Thank you for your business!\n" +
                 $"\t-Keith Wehmeier, Wehmeier Music Service"
             };

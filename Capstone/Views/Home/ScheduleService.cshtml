@@ -11,8 +11,6 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <input type="hidden" asp-for="City" />
-        <input type="hidden" asp-for="State" />
         <input type="hidden" asp-for="Latitude" />
         <input type="hidden" asp-for="Longitude" />
 
@@ -42,6 +40,16 @@
                 <label asp-for="StreetAddress" class="control-label"></label>
                 <input asp-for="StreetAddress" class="form-control" />
                 <span asp-validation-for="StreetAddress" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="City" class="control-label"></label>
+                <input asp-for="City" class="form-control" />
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="State" class="control-label"></label>
+                <input asp-for="State" class="form-control" />
+                <span asp-validation-for="State" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Zip" class="control-label"></label>

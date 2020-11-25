@@ -43,7 +43,7 @@
     <p>Piano: @Model.PianoMake @Model.PianoConfiguration</p>
     <p>Included Services: @Model.Services</p>
     <p>Estimated Duration: @Model.EstimatedDuration min.</p>
-    <p>Estimated Cost: $@Model.EstimatedCost</p>
+    <p>Estimated Cost: @Model.EstimatedCost.ToString("C")</p>
     <p>Notes: @Model.CustomerNotes</p>
     <p>Available Appointments:</p>
     @foreach (var item in ViewBag.availableAppointments)

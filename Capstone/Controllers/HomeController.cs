@@ -87,17 +87,15 @@ namespace Capstone.Controllers
             // Geocode address
             pendingAppointment = await _google.GeocodeAddress(pendingAppointment);
 
+            // Find all available appointments based on time
             ViewBag.availableAppointments = await GetAppointments(pendingAppointment);
             
-            // Logic for checking database for available appointments
-            // Bind appointments to ViewBag
             return View(pendingAppointment);
         }
 
         public IActionResult ConfirmRequest(PendingAppointment pendingAppointment)
         {
-            TimeSpan duration = new TimeSpan(0, pendingAppointment.EstimatedDuration, 0);
-            pendingAppointment.ServiceEnd = pendingAppointment.ServiceStart + duration;
+            pendingAppointment.ServiceEnd = pendingAppointment.ServiceStart + new TimeSpan(0, pendingAppointment.EstimatedDuration, 0);
             _context.PendingAppointments.Add(pendingAppointment);
             _context.SaveChanges();
             _mailKit.SendAppointmentRequestEmail(pendingAppointment);
