@@ -8,19 +8,20 @@ using Microsoft.Extensions.Logging;
 using Capstone.Models;
 using Capstone.Data;
 using Capstone.Services;
+using Capstone.Contracts;
 
 namespace Capstone.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly ApplicationDbContext _context;
+        private IRepositoryWrapper _repo;
         public GoogleService _google;
         public MailKitService _mailKit;
 
-        public HomeController(ApplicationDbContext context, ILogger<HomeController> logger, GoogleService google, MailKitService mailKit)
+        public HomeController(IRepositoryWrapper repo, ILogger<HomeController> logger, GoogleService google, MailKitService mailKit)
         {
-            _context = context;
+            _repo = repo;
             _logger = logger;
             _google = google;
             _mailKit = mailKit;
@@ -96,8 +97,10 @@ namespace Capstone.Controllers
         public IActionResult ConfirmRequest(PendingAppointment pendingAppointment)
         {
             pendingAppointment.ServiceEnd = pendingAppointment.ServiceStart + new TimeSpan(0, pendingAppointment.EstimatedDuration, 0);
-            _context.PendingAppointments.Add(pendingAppointment);
-            _context.SaveChanges();
+            _repo.PendingAppointment.Create(pendingAppointment);
+            //_context.PendingAppointments.Add(pendingAppointment);
+            _repo.Save();
+            //_context.SaveChanges();
             _mailKit.SendAppointmentRequestEmail(pendingAppointment);
 
             return View(pendingAppointment);
@@ -121,10 +124,12 @@ namespace Capstone.Controllers
             do
             {
                 // Find relevant rule set
-                var currentRuleSet = _context.RuleSets.Where(rs => rs.StartDate <= currentDay.Date).OrderByDescending(rs => rs.StartDate).FirstOrDefault();
+                var currentRuleSet = _repo.RuleSet.FindByCondition(rs => (rs.StartDate <= currentDay.Date) && ((rs.EndDate == null) || (rs.EndDate > currentDay.Date))).OrderByDescending(rs => rs.StartDate).FirstOrDefault();
+                //_context.RuleSets.Where(rs => (rs.StartDate <= currentDay.Date) && ((rs.EndDate == null) || (rs.EndDate > currentDay.Date))).OrderByDescending(rs => rs.StartDate).FirstOrDefault();
 
                 // Find all existing appointments for preferred appointment date
-                var existingAppointments = _context.Appointments.Where(a => a.ServiceStart.Date == currentDay.Date).ToList();
+                var existingAppointments = _repo.Appointment.FindByCondition(a => a.ServiceStart.Date == currentDay.Date).ToList();
+                //_context.Appointments.Where(a => a.ServiceStart.Date == currentDay.Date).ToList();
 
                 // If appointments exist
                 if (existingAppointments.Count > 0)
@@ -146,7 +151,8 @@ namespace Capstone.Controllers
 
 
                             // Find appointment block in current rule set for correct day of week
-                            var appointmentBlock = _context.AppointmentBlocks.Where(ab => (ab.RuleSetId == currentRuleSet.RuleSetId) && (ab.Day == currentDay.DayOfWeek)).SingleOrDefault();
+                            var appointmentBlock = _repo.AppointmentBlock.FindByCondition(ab => (ab.RuleSetId == currentRuleSet.RuleSetId) && (ab.Day == currentDay.DayOfWeek)).SingleOrDefault();
+                            //_context.AppointmentBlocks.Where(ab => (ab.RuleSetId == currentRuleSet.RuleSetId) && (ab.Day == currentDay.DayOfWeek)).SingleOrDefault();
                             var appointmentBlockEndTime = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, appointmentBlock.EndTime.Hour, appointmentBlock.EndTime.Minute, appointmentBlock.EndTime.Second);
 
                             // If appointment will end before the end of the work day
@@ -169,10 +175,12 @@ namespace Capstone.Controllers
                 else
                 {
                     // Find default times
-                    var defaultTimes = _context.DefaultTimes.Where(dt => dt.RuleSetId == currentRuleSet.RuleSetId).ToList();
+                    var defaultTimes = _repo.DefaultTime.FindByCondition(dt => dt.RuleSetId == currentRuleSet.RuleSetId).ToList();
+                    //_context.DefaultTimes.Where(dt => dt.RuleSetId == currentRuleSet.RuleSetId).ToList();
 
                     // Find appointment block in current rule set for correct day of week
-                    var appointmentBlock = _context.AppointmentBlocks.Where(ab => (ab.RuleSetId == currentRuleSet.RuleSetId) && (ab.Day == currentDay.DayOfWeek)).SingleOrDefault();
+                    var appointmentBlock = _repo.AppointmentBlock.FindByCondition(ab => (ab.RuleSetId == currentRuleSet.RuleSetId) && (ab.Day == currentDay.DayOfWeek)).SingleOrDefault();
+                    //_context.AppointmentBlocks.Where(ab => (ab.RuleSetId == currentRuleSet.RuleSetId) && (ab.Day == currentDay.DayOfWeek)).SingleOrDefault();
 
                     if (appointmentBlock != null)
                     {

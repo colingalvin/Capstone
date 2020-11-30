@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Capstone.Contracts;
 using Capstone.Data;
 using Capstone.Models;
 using Capstone.Services;
@@ -16,28 +17,32 @@ namespace Capstone.Controllers
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
-        private readonly ApplicationDbContext _context;
         public MailKitService _mailKitService;
+        private IRepositoryWrapper _repo;
 
-        public AdminController(ApplicationDbContext context, MailKitService mailKitService)
+        public AdminController(MailKitService mailKitService, IRepositoryWrapper repo)
         {
-            _context = context;
             _mailKitService = mailKitService;
+            _repo = repo;
         }
         public ActionResult Index()
         {
             CheckForReminderEmails();
-            var pendingAppointments = _context.PendingAppointments.ToList();
+            var pendingAppointments = _repo.PendingAppointment.FindAll().ToList();//_context.PendingAppointments.ToList();
 
-            ViewBag.completedAppointments = _context.Appointments.Include(a => a.Piano.Client.Address).Where(a => (a.ServiceEnd < DateTime.Now) && (a.IsComplete == false)).ToList();
-            ViewBag.todaysAppointments = _context.Appointments.Include(a => a.Piano.Client.Address).Where(a => a.ServiceStart.Date == DateTime.Now.Date).ToList();
-            ViewBag.nextSevenDaysAppointments = _context.Appointments.Include(a => a.Piano.Client.Address).Where(a => (a.ServiceStart.Date > DateTime.Now) && (a.ServiceStart.Date < DateTime.Now.AddDays(7).Date)).OrderBy(a => a.ServiceStart).ToList();
+            ViewBag.completedAppointments = _repo.Appointment.FindByCondition(a => (a.ServiceEnd < DateTime.Now) && (a.IsComplete == false)).Include(a => a.Piano.Client.Address).ToList();
+            //_context.Appointments.Include(a => a.Piano.Client.Address).Where(a => (a.ServiceEnd < DateTime.Now) && (a.IsComplete == false)).ToList();
+            ViewBag.todaysAppointments = _repo.Appointment.FindByCondition(a => a.ServiceStart.Date == DateTime.Now.Date).Include(a => a.Piano.Client.Address).ToList();
+            //_context.Appointments.Include(a => a.Piano.Client.Address).Where(a => a.ServiceStart.Date == DateTime.Now.Date).ToList();
+            ViewBag.nextSevenDaysAppointments = _repo.Appointment.FindByCondition(a => (a.ServiceStart.Date > DateTime.Now) && (a.ServiceStart.Date < DateTime.Now.AddDays(7).Date)).Include(a => a.Piano.Client.Address).OrderBy(a => a.ServiceStart).ToList();
+            //_context.Appointments.Include(a => a.Piano.Client.Address).Where(a => (a.ServiceStart.Date > DateTime.Now) && (a.ServiceStart.Date < DateTime.Now.AddDays(7).Date)).OrderBy(a => a.ServiceStart).ToList();
             return View(pendingAppointments);
         }
 
         public ActionResult AllClients()
         {
-            var clients = _context.Clients.Include(c => c.Address).ToList();
+            var clients = _repo.Client.FindAll().Include(c => c.Address).ToList();
+            //_context.Clients.Include(c => c.Address).ToList();
             return View(clients);
         }
 
@@ -45,64 +50,89 @@ namespace Capstone.Controllers
         {
             if (id == null)
             {
-                var appointments = _context.Appointments.Include(a => a.Piano.Client.Address).Where(a => a.IsComplete == true).OrderByDescending(a => a.ServiceEnd).ToList();
+                var appointments = _repo.Appointment.FindByCondition(a => a.IsComplete == true).Include(a => a.Piano.Client.Address).OrderByDescending(a => a.ServiceEnd).ToList();
+                //_context.Appointments.Include(a => a.Piano.Client.Address).Where(a => a.IsComplete == true).OrderByDescending(a => a.ServiceEnd).ToList();
                 return View(appointments);
             }
             else
             {
-                var appointments = _context.Appointments.Include(a => a.Piano.Client.Address).Where(a => (a.IsComplete == true) && (a.Piano.ClientId == id)).OrderByDescending(a => a.ServiceEnd).ToList();
+                var appointments = _repo.Appointment.FindByCondition(a => (a.IsComplete == true) && (a.Piano.ClientId == id)).Include(a => a.Piano.Client.Address).OrderByDescending(a => a.ServiceEnd).ToList();
+                //_context.Appointments.Include(a => a.Piano.Client.Address).Where(a => (a.IsComplete == true) && (a.Piano.ClientId == id)).OrderByDescending(a => a.ServiceEnd).ToList();
                 return View(appointments);
             }
         }
 
         public ActionResult EditClient(int id)
         {
-            var client = _context.Clients.Include(c => c.Address).Where(c => c.ClientId == id).SingleOrDefault();
+            var client = _repo.Client.FindByCondition(c => c.ClientId == id).Include(c => c.Address).SingleOrDefault();
+            //_context.Clients.Include(c => c.Address).Where(c => c.ClientId == id).SingleOrDefault();
             return View(client);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditClient(Client client)
+        {
+            _repo.Address.Update(client.Address);
+            _repo.Client.Update(client);
+            _repo.Save();
+            return RedirectToAction("AllClients");
         }
 
         public ActionResult ClientDetails(int id)
         {
-            var client = _context.Clients.Include(c => c.Address).Where(c => c.ClientId == id).SingleOrDefault();
-            ViewBag.pianos = _context.Pianos.Where(p => p.ClientId == client.ClientId);
+            var client = _repo.Client.FindByCondition(c => c.ClientId == id).Include(c => c.Address).SingleOrDefault();
+            //_context.Clients.Include(c => c.Address).Where(c => c.ClientId == id).SingleOrDefault();
+            ViewBag.pianos = _repo.Piano.FindByCondition(p => p.ClientId == client.ClientId).ToList();
+            //_context.Pianos.Where(p => p.ClientId == client.ClientId);
             return View(client);
         }
 
         public ActionResult EditPiano(int id)
         {
-            var piano = _context.Pianos.Where(p => p.PianoId == id).SingleOrDefault();
+            var piano = _repo.Piano.FindByCondition(p => p.PianoId == id).SingleOrDefault();
+            //_context.Pianos.Where(p => p.PianoId == id).SingleOrDefault();
             return View(piano);
         }
 
         public async Task<ActionResult> CompleteAppointment(int id)
         {
-            var appointment = await _context.Appointments.Where(a => a.AppointmentId == id).SingleOrDefaultAsync();
-            var piano = await _context.Pianos.Where(p => p.PianoId == appointment.PianoId).SingleOrDefaultAsync();
+            var appointment = await _repo.Appointment.FindByCondition(a => a.AppointmentId == id).SingleOrDefaultAsync();
+            //await _context.Appointments.Where(a => a.AppointmentId == id).SingleOrDefaultAsync();
+            var piano = await _repo.Piano.FindByCondition(p => p.PianoId == appointment.PianoId).SingleOrDefaultAsync();
+            //await _context.Pianos.Where(p => p.PianoId == appointment.PianoId).SingleOrDefaultAsync();
             appointment.IsComplete = true;
             piano.LastService = appointment.ServiceStart.Date;
             piano.RemindForService = piano.LastService + new TimeSpan(365, 0, 0, 0);
             piano.Reminded = false;
-            _context.Appointments.Update(appointment);
-            _context.Pianos.Update(piano);
-            _context.SaveChanges();
+            _repo.Appointment.Update(appointment);
+            //_context.Appointments.Update(appointment);
+            _repo.Piano.Update(piano);
+            //_context.Pianos.Update(piano);
+            _repo.Save();
+            //_context.SaveChanges();
             return RedirectToAction("Index");
         }
 
         public ActionResult EditAppointment(int id)
         {
-            var appointment = _context.Appointments.Include(a => a.Piano.Client.Address).Where(a => a.AppointmentId == id).SingleOrDefault();
+            var appointment = _repo.Appointment.FindByCondition(a => a.AppointmentId == id).Include(a => a.Piano.Client.Address).SingleOrDefault();
+            //_context.Appointments.Include(a => a.Piano.Client.Address).Where(a => a.AppointmentId == id).SingleOrDefault();
             return View(appointment);
         }
 
         public ActionResult SaveAppointmentChanges(Appointment alteredAppointment)
         {
-            _context.Appointments.Update(alteredAppointment);
-            _context.Pianos.Update(alteredAppointment.Piano);
-            _context.Clients.Update(alteredAppointment.Piano.Client);
-            _context.Addresses.Update(alteredAppointment.Piano.Client.Address);
-            _context.SaveChanges();
-
-            // logic to update appointment, piano, client, and address information
+            _repo.Appointment.Update(alteredAppointment);
+            //_context.Appointments.Update(alteredAppointment);
+            _repo.Piano.Update(alteredAppointment.Piano);
+            //_context.Pianos.Update(alteredAppointment.Piano);
+            _repo.Client.Update(alteredAppointment.Piano.Client);
+            //_context.Clients.Update(alteredAppointment.Piano.Client);
+            _repo.Address.Update(alteredAppointment.Piano.Client.Address);
+            //_context.Addresses.Update(alteredAppointment.Piano.Client.Address);
+            _repo.Save();
+            //_context.SaveChanges();
             return RedirectToAction("Index");
         }
 
@@ -111,9 +141,12 @@ namespace Capstone.Controllers
             CreateNewRuleSetViewModel ruleSet;
             if (id != null)
             {
-                RuleSet existingRuleSet = _context.RuleSets.Include(rs => rs.Address).Where(rs => rs.RuleSetId == id).SingleOrDefault();
-                List<AppointmentBlock> existingBlocks = _context.AppointmentBlocks.Where(ab => ab.RuleSetId == existingRuleSet.RuleSetId).ToList();
-                List<DefaultTime> existingDefaultTimes = _context.DefaultTimes.Where(dt => dt.RuleSetId == existingRuleSet.RuleSetId).ToList();
+                RuleSet existingRuleSet = _repo.RuleSet.FindByCondition(rs => rs.RuleSetId == id).Include(rs => rs.Address).SingleOrDefault();
+                //_context.RuleSets.Include(rs => rs.Address).Where(rs => rs.RuleSetId == id).SingleOrDefault();
+                List<AppointmentBlock> existingBlocks = _repo.AppointmentBlock.FindByCondition(ab => ab.RuleSetId == existingRuleSet.RuleSetId).ToList();
+                //_context.AppointmentBlocks.Where(ab => ab.RuleSetId == existingRuleSet.RuleSetId).ToList();
+                List<DefaultTime> existingDefaultTimes = _repo.DefaultTime.FindByCondition(dt => dt.RuleSetId == existingRuleSet.RuleSetId).ToList();
+                //_context.DefaultTimes.Where(dt => dt.RuleSetId == existingRuleSet.RuleSetId).ToList();
                 List<DateTime> existingTimes = new List<DateTime>();
                 foreach(DefaultTime time in existingDefaultTimes)
                 {
@@ -145,8 +178,6 @@ namespace Capstone.Controllers
             return View(ruleSet);
         }
 
-        //[BindProperty]
-        //public List<DateTime> DefaultTimes { get; set; }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CreateRuleSet(CreateNewRuleSetViewModel ruleSet)
@@ -154,7 +185,8 @@ namespace Capstone.Controllers
             if (ruleSet.RuleSetId == 0)
             {
                 // Check for existing/create new address
-                var matchingAddress = _context.Addresses.Where(a => a.StreetAddress == ruleSet.StreetAddress).SingleOrDefault();
+                var matchingAddress = _repo.Address.FindByCondition(a => a.StreetAddress == ruleSet.StreetAddress).SingleOrDefault();
+                //_context.Addresses.Where(a => a.StreetAddress == ruleSet.StreetAddress).SingleOrDefault();
                 if (matchingAddress == null)
                 {
                     Address address = new Address()
@@ -163,8 +195,10 @@ namespace Capstone.Controllers
                         Zip = ruleSet.Zip
                     };
                     // Geocode/fill in additional Address information
-                    _context.Addresses.Add(address);
-                    _context.SaveChanges();
+                    _repo.Address.Create(address);
+                    //_context.Addresses.Add(address);
+                    _repo.Save();
+                    //_context.SaveChanges();
                     matchingAddress = address;
                 }
 
@@ -176,47 +210,58 @@ namespace Capstone.Controllers
                     Default = ruleSet.Default,
                     HomeAddressId = matchingAddress.AddressId
                 };
-                _context.RuleSets.Add(newRuleSet);
-                _context.SaveChanges();
+                _repo.RuleSet.Create(newRuleSet);
+                //_context.RuleSets.Add(newRuleSet);
+                _repo.Save();
+                //_context.SaveChanges();
 
                 // Create new appointment blocks
-                foreach (var day in ruleSet.Days)
+                if(ruleSet.Days != null)
                 {
-                    AppointmentBlock appointmentBlock = new AppointmentBlock()
+                    foreach (var day in ruleSet.Days)
                     {
-                        Day = day,
-                        StartTime = ruleSet.StartTime,
-                        EndTime = ruleSet.EndTime,
-                        RuleSetId = newRuleSet.RuleSetId,
-                        RuleSet = newRuleSet
-                    };
-                    _context.AppointmentBlocks.Add(appointmentBlock);
-                }
+                        AppointmentBlock appointmentBlock = new AppointmentBlock()
+                        {
+                            Day = day,
+                            StartTime = ruleSet.StartTime,
+                            EndTime = ruleSet.EndTime,
+                            RuleSetId = newRuleSet.RuleSetId,
+                            RuleSet = newRuleSet
+                        };
+                        _repo.AppointmentBlock.Create(appointmentBlock);
+                        //_context.AppointmentBlocks.Add(appointmentBlock);
+                    }
 
-                // Create new default appointment times
-                foreach (var time in ruleSet.DefaultTimes)
-                {
-                    DefaultTime defaultTime = new DefaultTime()
+                    // Create new default appointment times
+                    foreach (var time in ruleSet.DefaultTimes)
                     {
-                        StartTime = time,
-                        RuleSetId = newRuleSet.RuleSetId,
-                        RuleSet = newRuleSet
-                    };
-                    _context.DefaultTimes.Add(defaultTime);
-                }
-                _context.SaveChanges();
+                        DefaultTime defaultTime = new DefaultTime()
+                        {
+                            StartTime = time,
+                            RuleSetId = newRuleSet.RuleSetId,
+                            RuleSet = newRuleSet
+                        };
+                        _repo.DefaultTime.Create(defaultTime);
+                        //_context.DefaultTimes.Add(defaultTime);
+                    }
+                    _repo.Save();
+                    //_context.SaveChanges();
+                }    
             }
             else
             {
                 // Update/save changes to existing rule set
-                RuleSet existingRuleSet = _context.RuleSets.Where(rs => rs.RuleSetId == ruleSet.RuleSetId).SingleOrDefault();
+                RuleSet existingRuleSet = _repo.RuleSet.FindByCondition(rs => rs.RuleSetId == ruleSet.RuleSetId).SingleOrDefault();
+                //_context.RuleSets.Where(rs => rs.RuleSetId == ruleSet.RuleSetId).SingleOrDefault();
                 existingRuleSet.StartDate = ruleSet.StartDate;
                 existingRuleSet.EndDate = ruleSet.EndDate;
                 existingRuleSet.Default = ruleSet.Default;
-                _context.RuleSets.Update(existingRuleSet);
+                _repo.RuleSet.Update(existingRuleSet);
+                //_context.RuleSets.Update(existingRuleSet);
 
                 // Check for changes to address
-                Address address = _context.Addresses.Where(a => a.AddressId == existingRuleSet.HomeAddressId).SingleOrDefault();
+                Address address = _repo.Address.FindByCondition(a => a.AddressId == existingRuleSet.HomeAddressId).SingleOrDefault();
+                //_context.Addresses.Where(a => a.AddressId == existingRuleSet.HomeAddressId).SingleOrDefault();
                 if (existingRuleSet.Address.StreetAddress != address.StreetAddress)
                 {
                     Address newAddress = new Address()
@@ -225,18 +270,23 @@ namespace Capstone.Controllers
                         Zip = ruleSet.Zip
                     };
                     // Geocode/fill in additional Address information
-                    _context.Addresses.Add(newAddress);
-                    _context.SaveChanges();
+                    _repo.Address.Create(newAddress);
+                    //_context.Addresses.Add(newAddress);
+                    _repo.Save();
+                    //_context.SaveChanges();
                     existingRuleSet.HomeAddressId = newAddress.AddressId;
                 }
 
                 // Delete all appointment blocks associated with rule set id
-                List<AppointmentBlock> blocks = _context.AppointmentBlocks.Include(ab => ab.RuleSet).Where(ab => ab.RuleSetId == existingRuleSet.RuleSetId).ToList();
-                foreach(AppointmentBlock block in blocks)
+                List<AppointmentBlock> blocks = _repo.AppointmentBlock.FindByCondition(ab => ab.RuleSetId == existingRuleSet.RuleSetId).Include(ab => ab.RuleSet).ToList();
+                //_context.AppointmentBlocks.Include(ab => ab.RuleSet).Where(ab => ab.RuleSetId == existingRuleSet.RuleSetId).ToList();
+                foreach (AppointmentBlock block in blocks)
                 {
-                    _context.AppointmentBlocks.Remove(block);
+                    _repo.AppointmentBlock.Delete(block);
+                    //_context.AppointmentBlocks.Remove(block);
                 }
-                _context.SaveChanges();
+                _repo.Save();
+                //_context.SaveChanges();
 
                 // Create new appointment blocks associated with rule set id
                 foreach (DayOfWeek day in ruleSet.Days)
@@ -249,17 +299,22 @@ namespace Capstone.Controllers
                         RuleSetId = existingRuleSet.RuleSetId,
                         RuleSet = existingRuleSet
                     };
-                    _context.AppointmentBlocks.Add(appointmentBlock);
+                    _repo.AppointmentBlock.Create(appointmentBlock);
+                    //_context.AppointmentBlocks.Add(appointmentBlock);
                 }
-                _context.SaveChanges();
+                _repo.Save();
+                //_context.SaveChanges();
 
                 // Delete all default appointment times associated with rule set id
-                List<DefaultTime> defaultTimes = _context.DefaultTimes.Include(dt => dt.RuleSet).Where(dt => dt.RuleSetId == existingRuleSet.RuleSetId).ToList();
+                var defaultTimes = _repo.DefaultTime.FindByCondition(dt => dt.RuleSetId == existingRuleSet.RuleSetId).Include(dt => dt.RuleSet).ToList();
+                //_context.DefaultTimes.Include(dt => dt.RuleSet).Where(dt => dt.RuleSetId == existingRuleSet.RuleSetId).ToList();
                 foreach (DefaultTime defaultTime in defaultTimes)
                 {
-                    _context.DefaultTimes.Remove(defaultTime);
+                    _repo.DefaultTime.Delete(defaultTime);
+                    //_context.DefaultTimes.Remove(defaultTime);
                 }
-                _context.SaveChanges();
+                _repo.Save();
+                //_context.SaveChanges();
 
                 // Create new default appointment times associated with rule set id
                 foreach (DateTime time in ruleSet.DefaultTimes)
@@ -270,8 +325,10 @@ namespace Capstone.Controllers
                         RuleSetId = existingRuleSet.RuleSetId,
                         RuleSet = existingRuleSet
                     };
-                    _context.DefaultTimes.Add(defaultTime);
-                    _context.SaveChanges();
+                    _repo.DefaultTime.Create(defaultTime);
+                    //_context.DefaultTimes.Add(defaultTime);
+                    _repo.Save();
+                    //_context.SaveChanges();
                 }
             }
             return RedirectToAction("ViewRuleSets");
@@ -279,13 +336,15 @@ namespace Capstone.Controllers
 
         public ActionResult ViewRuleSets()
         {
-            var ruleSets = _context.RuleSets.ToList();
+            var ruleSets = _repo.RuleSet.FindAll().ToList();
+            //_context.RuleSets.ToList();
             return View(ruleSets);
         }
 
         public ActionResult PendingAppointmentDetails(int id)
         {
-            var appointment = _context.PendingAppointments.Where(pa => pa.PendingAppointmentId == id).SingleOrDefault();
+            var appointment = _repo.PendingAppointment.FindByCondition(pa => pa.PendingAppointmentId == id).SingleOrDefault();
+            //_context.PendingAppointments.Where(pa => pa.PendingAppointmentId == id).SingleOrDefault();
 
             CreateNewAppointmentViewModel model = new CreateNewAppointmentViewModel() {
                 PendingAppointmentId = id,
@@ -308,13 +367,15 @@ namespace Capstone.Controllers
                 EstimatedCost = appointment.EstimatedCost
             };
 
-            var matchingClients = _context.Clients.Include(c => c.Address).Where(c => (c.FirstName == appointment.FirstName) && (c.LastName == appointment.LastName)).ToList();
+            var matchingClients = _repo.Client.FindByCondition(c => (c.FirstName == appointment.FirstName) && (c.LastName == appointment.LastName)).Include(c => c.Address).ToList();
+            //_context.Clients.Include(c => c.Address).Where(c => (c.FirstName == appointment.FirstName) && (c.LastName == appointment.LastName)).ToList();
             List<int> clientIds = new List<int>();
             foreach (Client client in matchingClients)
             {
                 clientIds.Add(client.ClientId);
             }
-            ViewBag.matchingPianos = _context.Pianos.Where(p => clientIds.Contains(p.ClientId)).ToList();
+            ViewBag.matchingPianos = _repo.Piano.FindByCondition(p => clientIds.Contains(p.ClientId)).ToList();
+            //_context.Pianos.Where(p => clientIds.Contains(p.ClientId)).ToList();
             ViewBag.matchingClients = matchingClients;
             return View(model);
         }
@@ -341,8 +402,10 @@ namespace Capstone.Controllers
                             Latitude = model.Latitude,
                             Longitude = model.Longitude
                         };
-                        _context.Addresses.Add(address);
-                        _context.SaveChanges();
+                        _repo.Address.Create(address);
+                        //_context.Addresses.Add(address);
+                        _repo.Save();
+                        //_context.SaveChanges();
 
                         // Create new client instance
                         Client client = new Client()
@@ -353,8 +416,10 @@ namespace Capstone.Controllers
                             Phone = model.Phone,
                             AddressId = address.AddressId
                         };
-                        _context.Clients.Add(client);
-                        _context.SaveChanges();
+                        _repo.Client.Create(client);
+                        //_context.Clients.Add(client);
+                        _repo.Save();
+                        //_context.SaveChanges();
                         clientId = client.ClientId;
                     }
 
@@ -367,8 +432,10 @@ namespace Capstone.Controllers
                             Make = model.Make,
                             Configuration = model.Configuration,
                         };
-                        _context.Pianos.Add(piano);
-                        _context.SaveChanges();
+                        _repo.Piano.Create(piano);
+                        //_context.Pianos.Add(piano);
+                        _repo.Save();
+                        //_context.SaveChanges();
                         pianoId = piano.PianoId;
                     }
                 }
@@ -381,7 +448,8 @@ namespace Capstone.Controllers
             Appointment appointment = new Appointment()
             {
                 PianoId = pianoId,
-                Piano = _context.Pianos.Where(p => p.PianoId == pianoId).SingleOrDefault(),
+                Piano = _repo.Piano.FindByCondition(p => p.PianoId == pianoId).SingleOrDefault(),
+                //_context.Pianos.Where(p => p.PianoId == pianoId).SingleOrDefault(),
                 Services = model.Services.ToString(),
                 CustomerNotes = model.CustomerNotes,
                 ServiceStart = model.ServiceStart,
@@ -390,28 +458,35 @@ namespace Capstone.Controllers
                 Longitude = model.Longitude,
                 EstimatedCost = model.EstimatedCost
             };
-
-            _context.Appointments.Add(appointment);
-            _context.PendingAppointments.Remove(_context.PendingAppointments.Where(pa => pa.PendingAppointmentId == model.PendingAppointmentId).SingleOrDefault());
-            _context.SaveChanges();
-            _mailKitService.SendAppointmentConfirmEmail(_context.Appointments.Include(a => a.Piano.Client.Address).Where(a => a.AppointmentId == appointment.AppointmentId).SingleOrDefault());
+            _repo.Appointment.Create(appointment);
+            //_context.Appointments.Add(appointment);
+            _repo.PendingAppointment.Delete(_repo.PendingAppointment.FindByCondition(pa => pa.PendingAppointmentId == model.PendingAppointmentId).SingleOrDefault());
+            //_context.PendingAppointments.Remove(_context.PendingAppointments.Where(pa => pa.PendingAppointmentId == model.PendingAppointmentId).SingleOrDefault());
+            _repo.Save();
+            //_context.SaveChanges();
+            _mailKitService.SendAppointmentConfirmEmail(_repo.Appointment.FindByCondition(a => a.AppointmentId == appointment.AppointmentId).Include(a => a.Piano.Client.Address).SingleOrDefault());
+            //_context.Appointments.Include(a => a.Piano.Client.Address).Where(a => a.AppointmentId == appointment.AppointmentId).SingleOrDefault());
             return RedirectToAction("Index");
         }
 
         public void CheckForReminderEmails()
         {
-            var pianosDueForService = _context.Pianos.Include(p => p.Client).Where(p => p.RemindForService <= DateTime.Today.Date).ToList();
+            var pianosDueForService = _repo.Piano.FindByCondition(p => p.RemindForService <= DateTime.Today.Date).Include(p => p.Client).ToList();
+            //_context.Pianos.Include(p => p.Client).Where(p => p.RemindForService <= DateTime.Today.Date).ToList();
             foreach (Piano piano in pianosDueForService)
             {
                 if (!piano.Reminded)
                 {
                     _mailKitService.SendServiceRemindEmail(piano);
                     piano.Reminded = true;
-                    _context.Update(piano);
+                    _repo.Piano.Update(piano);
+                    //_context.Update(piano);
                 }
             }
-            _context.SaveChanges();
-            var upcomingAppointments = _context.Appointments.Include(a => a.Piano.Client.Address).Where(a => a.ServiceStart.Date == DateTime.Today.AddDays(1).Date).ToList();
+            _repo.Save();
+            //_context.SaveChanges();
+            var upcomingAppointments = _repo.Appointment.FindByCondition(a => a.ServiceStart.Date == DateTime.Today.AddDays(1).Date).Include(a => a.Piano.Client.Address).ToList();
+            //_context.Appointments.Include(a => a.Piano.Client.Address).Where(a => a.ServiceStart.Date == DateTime.Today.AddDays(1).Date).ToList();
             foreach (Appointment appointment in upcomingAppointments)
             {
                 _mailKitService.SendUpcomingServiceEmail(appointment);
