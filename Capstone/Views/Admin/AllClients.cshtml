@@ -51,6 +51,7 @@
                 @Html.DisplayFor(modelItem => item.Phone)
             </td>
             <td>
+                <a asp-action="ClientDetails" asp-route-id="@item.ClientId">Details</a> |
                 <a asp-action="EditClient" asp-route-id="@item.ClientId">Edit</a> |
                 <a asp-action="ServiceHistory" asp-route-id="@item.ClientId">Service History</a>
             </td>

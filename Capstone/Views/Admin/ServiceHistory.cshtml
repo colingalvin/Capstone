@@ -5,13 +5,16 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>PastAppointments</h1>
+<h1>Service History</h1>
 
 <table class="table">
     <thead>
         <tr>
             <th>
-                Client:
+                Client
+            </th>
+            <th>
+                Date of Service
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Piano)
@@ -26,10 +29,7 @@
                 @Html.DisplayNameFor(model => model.TechnicianNotes)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ServiceStart)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ServiceEnd)
+                Final Cost
             </th>
             <th></th>
         </tr>
@@ -40,6 +40,9 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Piano.Client.FirstName)
                 @Html.DisplayFor(modelItem => item.Piano.Client.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ServiceStart.Date)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Piano.Make) 
@@ -62,15 +65,10 @@
                 @Html.DisplayFor(modelItem => item.TechnicianNotes)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ServiceStart)
+                @Html.DisplayFor(modelItem => item.EstimatedCost)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ServiceEnd)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.AppointmentId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.AppointmentId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.AppointmentId">Delete</a>
+                <a asp-action="EditAppointment" asp-route-id="@item.AppointmentId">Edit</a>
             </td>
         </tr>
 }

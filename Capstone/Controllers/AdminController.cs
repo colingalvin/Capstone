@@ -41,23 +41,37 @@ namespace Capstone.Controllers
             return View(clients);
         }
 
-        public ActionResult PastAppointments()
+        public ActionResult ServiceHistory(int? id)
         {
-            var appointments = _context.Appointments.Include(a => a.Piano.Client.Address).Where(a => a.IsComplete == true).OrderByDescending(a => a.ServiceEnd).ToList();
-            return View(appointments);
+            if (id == null)
+            {
+                var appointments = _context.Appointments.Include(a => a.Piano.Client.Address).Where(a => a.IsComplete == true).OrderByDescending(a => a.ServiceEnd).ToList();
+                return View(appointments);
+            }
+            else
+            {
+                var appointments = _context.Appointments.Include(a => a.Piano.Client.Address).Where(a => (a.IsComplete == true) && (a.Piano.ClientId == id)).OrderByDescending(a => a.ServiceEnd).ToList();
+                return View(appointments);
+            }
         }
 
         public ActionResult EditClient(int id)
         {
-            var chosenClient = _context.Clients.Include(c => c.Address).Where(c => c.ClientId == id).SingleOrDefault();
-            return View(chosenClient);
+            var client = _context.Clients.Include(c => c.Address).Where(c => c.ClientId == id).SingleOrDefault();
+            return View(client);
         }
 
         public ActionResult ClientDetails(int id)
         {
-            var chosenClient = _context.Clients.Include(c => c.Address).Where(c => c.ClientId == id).SingleOrDefault();
-            ViewBag.pianos = _context.Pianos.Where(p => p.ClientId == chosenClient.ClientId);
-            return View(chosenClient);
+            var client = _context.Clients.Include(c => c.Address).Where(c => c.ClientId == id).SingleOrDefault();
+            ViewBag.pianos = _context.Pianos.Where(p => p.ClientId == client.ClientId);
+            return View(client);
+        }
+
+        public ActionResult EditPiano(int id)
+        {
+            var piano = _context.Pianos.Where(p => p.PianoId == id).SingleOrDefault();
+            return View(piano);
         }
 
         public async Task<ActionResult> CompleteAppointment(int id)

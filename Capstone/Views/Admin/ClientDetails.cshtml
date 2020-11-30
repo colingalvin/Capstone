@@ -61,12 +61,13 @@
                 {
                     <p>No Service History</p>
                 }
-                <p>Notes: @piano.TechnicianNotes</p>
+                <p>Notes: @piano.TechnicianNotes</p><br />
+                <a asp-action="EditPiano" asp-route-id="@piano.PianoId">Edit Piano</a>
             </dd>
         }
     </dl>
 </div>
 <div>
-    <a asp-action="EditClient" asp-route-id="@Model.ClientId">Edit</a> |
-    <a asp-action="Index">Home</a>
+    <a asp-action="EditClient" asp-route-id="@Model.ClientId">Edit Client</a> |
+    <a asp-action="Index">Admin Home</a>
 </div>
