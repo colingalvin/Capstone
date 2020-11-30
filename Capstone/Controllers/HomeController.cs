@@ -37,11 +37,6 @@ namespace Capstone.Controllers
             return View();
         }
 
-        public IActionResult Schedule()
-        {
-            return View();
-        }
-
         public IActionResult ScheduleService()
         {
             return View();
@@ -53,44 +48,9 @@ namespace Capstone.Controllers
         //[ValidateAntiForgeryToken]
         public async Task<IActionResult> ChooseAppointmentTime(PendingAppointment pendingAppointment)
         {
-            pendingAppointment.Services = string.Join(", ", ChosenServices.ToArray());
-            foreach(var includedService in ChosenServices)
-            {
-                foreach(var service in PianoServices.TuningServices)
-                {
-                    if (includedService == service.Name)
-                    {
-                        pendingAppointment.EstimatedDuration += service.Time;
-                        pendingAppointment.EstimatedCost += service.Cost;
-                        break;
-                    }
-                }
-                foreach(var service in PianoServices.RepairServices)
-                {
-                    if (includedService == service.Name)
-                    {
-                        pendingAppointment.EstimatedDuration += service.Time;
-                        pendingAppointment.EstimatedCost += service.Cost;
-                        break;
-                    }
-                }
-                foreach (var service in PianoServices.CleaningServices)
-                {
-                    if (includedService == service.Name)
-                    {
-                        pendingAppointment.EstimatedDuration += service.Time;
-                        pendingAppointment.EstimatedCost += service.Cost;
-                        break;
-                    }
-                }
-            }
-
-            // Geocode address
+            pendingAppointment = CalculateServiceTimeAndCost(pendingAppointment, ChosenServices);
             pendingAppointment = await _google.GeocodeAddress(pendingAppointment);
-
-            // Find all available appointments based on time
             ViewBag.availableAppointments = await GetAppointments(pendingAppointment);
-            
             return View(pendingAppointment);
         }
 
@@ -208,6 +168,42 @@ namespace Capstone.Controllers
         private DateTime CalculateServiceStart(DateTime dt, TimeSpan d)
         {
             return new DateTime((dt.Ticks + d.Ticks - 1) / d.Ticks * d.Ticks, dt.Kind);
+        }
+
+        private PendingAppointment CalculateServiceTimeAndCost(PendingAppointment pendingAppointment, List<string> includedServices)
+        {
+            pendingAppointment.Services = string.Join(", ", includedServices.ToArray());
+            foreach (var includedService in includedServices)
+            {
+                foreach (var service in PianoServices.TuningServices)
+                {
+                    if (includedService == service.Name)
+                    {
+                        pendingAppointment.EstimatedDuration += service.Time;
+                        pendingAppointment.EstimatedCost += service.Cost;
+                        break;
+                    }
+                }
+                foreach (var service in PianoServices.RepairServices)
+                {
+                    if (includedService == service.Name)
+                    {
+                        pendingAppointment.EstimatedDuration += service.Time;
+                        pendingAppointment.EstimatedCost += service.Cost;
+                        break;
+                    }
+                }
+                foreach (var service in PianoServices.CleaningServices)
+                {
+                    if (includedService == service.Name)
+                    {
+                        pendingAppointment.EstimatedDuration += service.Time;
+                        pendingAppointment.EstimatedCost += service.Cost;
+                        break;
+                    }
+                }
+            }
+            return pendingAppointment;
         }
     }
 }
