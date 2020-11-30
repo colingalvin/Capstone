@@ -7,7 +7,7 @@ using static Capstone.Contracts.IRepositoryBase;
 
 namespace Capstone.Contracts
 {
-    interface IPianoRepository : IRepositoryBase<Piano>
+    public interface IPianoRepository : IRepositoryBase<Piano>
     {
     }
 }

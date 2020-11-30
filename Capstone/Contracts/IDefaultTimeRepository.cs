@@ -7,7 +7,7 @@ using static Capstone.Contracts.IRepositoryBase;
 
 namespace Capstone.Contracts
 {
-    interface IDefaultTimeRepository : IRepositoryBase<DefaultTime>
+    public interface IDefaultTimeRepository : IRepositoryBase<DefaultTime>
     {
     }
 }

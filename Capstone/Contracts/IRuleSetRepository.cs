@@ -7,7 +7,7 @@ using static Capstone.Contracts.IRepositoryBase;
 
 namespace Capstone.Contracts
 {
-    interface IRuleSetRepository : IRepositoryBase<RuleSet>
+    public interface IRuleSetRepository : IRepositoryBase<RuleSet>
     {
     }
 }

@@ -7,7 +7,7 @@ using static Capstone.Contracts.IRepositoryBase;
 
 namespace Capstone.Contracts
 {
-    interface IPendingAppointmentRepository : IRepositoryBase<PendingAppointment>
+    public interface IPendingAppointmentRepository : IRepositoryBase<PendingAppointment>
     {
     }
 }

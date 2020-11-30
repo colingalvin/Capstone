@@ -7,7 +7,7 @@ using static Capstone.Contracts.IRepositoryBase;
 
 namespace Capstone.Contracts
 {
-    interface IClientRepository : IRepositoryBase<Client>
+    public interface IClientRepository : IRepositoryBase<Client>
     {
     }
 }

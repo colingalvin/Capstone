@@ -16,6 +16,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Capstone.ActionFilters;
 using Capstone.Services;
+using Capstone.Contracts;
 
 namespace Capstone
 {
@@ -39,14 +40,15 @@ namespace Capstone
                 .AddDefaultUI()
                 .AddDefaultTokenProviders();
             services.AddScoped<ClaimsPrincipal>(s => s.GetService<IHttpContextAccessor>().HttpContext.User);
+            services.AddScoped<GoogleService>();
+            services.AddScoped<MailKitService>();
+            services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
             services.AddControllers(config =>
             {
                 config.Filters.Add(typeof(GlobalRouting));
             });
             services.AddControllersWithViews();
             services.AddRazorPages();
-            services.AddScoped<GoogleService>();
-            services.AddScoped<MailKitService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
