@@ -448,7 +448,6 @@ namespace Capstone.Controllers
             Appointment appointment = new Appointment()
             {
                 PianoId = pianoId,
-                Piano = _repo.Piano.FindByCondition(p => p.PianoId == pianoId).SingleOrDefault(),
                 //_context.Pianos.Where(p => p.PianoId == pianoId).SingleOrDefault(),
                 Services = model.Services.ToString(),
                 CustomerNotes = model.CustomerNotes,

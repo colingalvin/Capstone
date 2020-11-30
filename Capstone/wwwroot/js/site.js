@@ -9,3 +9,4 @@ function addTime(event) {
     );
     event.preventDefault();
 }
+

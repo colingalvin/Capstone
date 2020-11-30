@@ -5,6 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+
 <div class="row">
     <div class="col-lg-6">
         @if (ViewBag.completedAppointments == null)
@@ -32,22 +33,22 @@
         <h4>Pending Appointments:</h4><br />
         <table>
             <tbody>
-                @foreach(var item in Model)
+                @foreach (var item in Model)
                 {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.FirstName) @Html.DisplayFor(modelItem => item.LastName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.PianoMake) @Html.DisplayFor(modelItem => item.PianoConfiguration)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Services)
-                    </td>
-                    <td>
-                        <a asp-action="PendingAppointmentDetails" asp-route-id="@item.PendingAppointmentId">Details/Confirm</a>
-                    </td>
-                </tr>
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FirstName) @Html.DisplayFor(modelItem => item.LastName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PianoMake) @Html.DisplayFor(modelItem => item.PianoConfiguration)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Services)
+                        </td>
+                        <td>
+                            <a asp-action="PendingAppointmentDetails" asp-route-id="@item.PendingAppointmentId">Details/Confirm</a>
+                        </td>
+                    </tr>
                 }
             </tbody>
         </table>
@@ -58,6 +59,8 @@
         }
         else
         {
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#mapsModal">View Map</button>
+            <br />
             <table>
                 <tbody>
                     @foreach (var appointment in ViewBag.todaysAppointments)
@@ -114,3 +117,55 @@
         }
     </div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="mapsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Today's Appointment Locations</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="location-map">
+                            <div style="width: 600px; height: 400px; margin: auto" id="map"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let addresses = [];
+</script>
+@foreach (var appointment in ViewBag.todaysAppointments)
+{
+    <script>
+        addresses.push([@appointment.Latitude, @appointment.Longitude]);
+    </script>
+}
+<script>
+    if (addresses.length > 0) {
+        function initMap() {
+            var bounds = new google.maps.LatLngBounds();
+            var map = new google.maps.Map(document.getElementById("map"), {
+            });
+            for (var i = 0; i < addresses.length; i++) {
+                var marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(addresses[i][0], addresses[i][1]),
+                    map: map
+                });
+                bounds.extend(marker.position);
+            }
+            map.fitBounds(bounds);
+        }
+    }
+</script>
