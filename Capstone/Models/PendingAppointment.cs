@@ -46,9 +46,6 @@ namespace Capstone.Models
         [Display(Name = "Please enter any additional notes concerning this service:")]
         public string CustomerNotes { get; set; }
 
-        [Display(Name = "Has this piano been serviced by WMS before?")]
-        public bool? ServicedBefore { get; set; }
-
         [Display(Name = "Preferred Appointment Date")]
         [DataType(DataType.Date)]
         public DateTime PreferredAppointmentDate { get; set; }
