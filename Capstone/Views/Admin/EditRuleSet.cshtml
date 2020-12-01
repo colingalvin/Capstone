@@ -47,18 +47,17 @@
                 {
                     @foreach (var day in DaysOfWeek.Days)
                     {
-                        <br />
                         <input name="Days" type="checkbox" value="@day.Name" id="defaultCheck1">
                         <label class="form-check-label" for="defaultCheck1">
                             @day.Name
                         </label>
+                        <br />
                     }
                 }
                 else
                 {
                     @foreach (var day in DaysOfWeek.Days)
                     {
-                        <br />
                         @if (Model.Days.Contains(day.Value))
                         {
                             <input checked name="Days" type="checkbox" value="@day.Name" id="defaultCheck1">
@@ -70,6 +69,7 @@
                         <label class="form-check-label" for="defaultCheck1">
                             @day.Name
                         </label>
+                        <br />
                     }
                 }
             </div>
@@ -98,7 +98,7 @@
                 }
                 <span asp-validation-for="DefaultTimes" class="text-danger"></span>
             </div>
-            <button type="button" onclick="addTime(event)">Add Time</button>
+            <button class="btn-secondary" onclick="addTime(event)">Add Time</button>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

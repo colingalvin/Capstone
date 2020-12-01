@@ -4,10 +4,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
-
-<h1>Choose Appointment Time</h1>
-
 <form asp-action="ConfirmRequest">
     <input type="hidden" asp-for="PendingAppointmentId" />
     <input type="hidden" asp-for="FirstName" />
@@ -30,29 +26,34 @@
     <input type="hidden" asp-for="PreferredAppointmentDate" />
     <input type="hidden" asp-for="ServiceEnd" />
 
-
-    <h3>Confirm appointment details:</h3>
-    <p>Name: @Model.FirstName @Model.LastName</p>
-    <p>Email: @Model.Email</p>
-    <p>Phone: @Model.Phone</p>
-    <p>Address:
-    <p>@Model.StreetAddress</p>
-    <p>@Model.City, @Model.State  @Model.Zip</p>
-    <div id="map" style="height: 400px; width: 100%;"></div>
-    <br />
-    <p>Piano: @Model.PianoMake @Model.PianoConfiguration</p>
-    <p>Included Services: @Model.Services</p>
-    <p>Estimated Duration: @Model.EstimatedDuration min.</p>
-    <p>Estimated Cost: @Model.EstimatedCost.ToString("C")</p>
-    <p>Notes: @Model.CustomerNotes</p>
-    <p>Available Appointments:</p>
-    @foreach (var item in ViewBag.availableAppointments)
-    {
-        <input asp-for="ServiceStart" value="@item" type="radio">@item.ToString("ddd, MMM dd hh:mm tt")<br />
-    }
-    <br />
-    <div class="form-group">
-        <input type="submit" value="Submit Service Request" class="btn btn-primary" />
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Confirm appointment details:</h3><br />
+            <p><strong>Name:</strong> @Model.FirstName @Model.LastName</p>
+            <p><strong>Email:</strong> @Model.Email</p>
+            <p><strong>Phone:</strong> @Model.Phone</p>
+            <div><strong>Address:</strong></div>
+            <div>@Model.StreetAddress</div>
+            <div>@Model.City, @Model.State  @Model.Zip</div><br />
+            <p><strong>Piano:</strong> @Model.PianoMake @Model.PianoConfiguration</p>
+            <p><strong>Included Services:</strong> @Model.Services</p>
+            <p><strong>Estimated Duration:</strong> @Model.EstimatedDuration min.</p>
+            <p><strong>Estimated Cost:</strong> @Model.EstimatedCost.ToString("C")</p>
+            <p><strong>Notes:</strong> @Model.CustomerNotes</p>
+        </div>
+        <div class="col-md-6">
+            <div id="map" style="height: 400px; width: auto;"></div>
+            <p class="text-danger small">Please confirm the accuracy of this map before submitting appointment request.</p>
+            <p><strong>Available Appointments:</strong></p>
+            @foreach (var item in ViewBag.availableAppointments)
+            {
+                <input asp-for="ServiceStart" value="@item" type="radio">@item.ToString("ddd, MMM dd hh:mm tt")<br />
+            }
+            <br />
+            <div class="form-group">
+                <input type="submit" value="Submit Service Request" class="btn btn-primary" />
+            </div>
+        </div>
     </div>
 </form>
 

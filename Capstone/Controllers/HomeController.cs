@@ -58,9 +58,7 @@ namespace Capstone.Controllers
         {
             pendingAppointment.ServiceEnd = pendingAppointment.ServiceStart + new TimeSpan(0, pendingAppointment.EstimatedDuration, 0);
             _repo.PendingAppointment.Create(pendingAppointment);
-            //_context.PendingAppointments.Add(pendingAppointment);
             _repo.Save();
-            //_context.SaveChanges();
             _mailKit.SendAppointmentRequestEmail(pendingAppointment);
 
             return View(pendingAppointment);
@@ -85,11 +83,9 @@ namespace Capstone.Controllers
             {
                 // Find relevant rule set
                 var currentRuleSet = _repo.RuleSet.FindByCondition(rs => (rs.StartDate <= currentDay.Date) && ((rs.EndDate == null) || (rs.EndDate > currentDay.Date))).OrderByDescending(rs => rs.StartDate).FirstOrDefault();
-                //_context.RuleSets.Where(rs => (rs.StartDate <= currentDay.Date) && ((rs.EndDate == null) || (rs.EndDate > currentDay.Date))).OrderByDescending(rs => rs.StartDate).FirstOrDefault();
 
                 // Find all existing appointments for preferred appointment date
                 var existingAppointments = _repo.Appointment.FindByCondition(a => a.ServiceStart.Date == currentDay.Date).ToList();
-                //_context.Appointments.Where(a => a.ServiceStart.Date == currentDay.Date).ToList();
 
                 // If appointments exist
                 if (existingAppointments.Count > 0)
@@ -112,7 +108,6 @@ namespace Capstone.Controllers
 
                             // Find appointment block in current rule set for correct day of week
                             var appointmentBlock = _repo.AppointmentBlock.FindByCondition(ab => (ab.RuleSetId == currentRuleSet.RuleSetId) && (ab.Day == currentDay.DayOfWeek)).SingleOrDefault();
-                            //_context.AppointmentBlocks.Where(ab => (ab.RuleSetId == currentRuleSet.RuleSetId) && (ab.Day == currentDay.DayOfWeek)).SingleOrDefault();
                             var appointmentBlockEndTime = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, appointmentBlock.EndTime.Hour, appointmentBlock.EndTime.Minute, appointmentBlock.EndTime.Second);
 
                             // If appointment will end before the end of the work day
@@ -136,11 +131,9 @@ namespace Capstone.Controllers
                 {
                     // Find default times
                     var defaultTimes = _repo.DefaultTime.FindByCondition(dt => dt.RuleSetId == currentRuleSet.RuleSetId).ToList();
-                    //_context.DefaultTimes.Where(dt => dt.RuleSetId == currentRuleSet.RuleSetId).ToList();
 
                     // Find appointment block in current rule set for correct day of week
                     var appointmentBlock = _repo.AppointmentBlock.FindByCondition(ab => (ab.RuleSetId == currentRuleSet.RuleSetId) && (ab.Day == currentDay.DayOfWeek)).SingleOrDefault();
-                    //_context.AppointmentBlocks.Where(ab => (ab.RuleSetId == currentRuleSet.RuleSetId) && (ab.Day == currentDay.DayOfWeek)).SingleOrDefault();
 
                     if (appointmentBlock != null)
                     {

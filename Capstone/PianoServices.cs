@@ -25,7 +25,6 @@ namespace Capstone
             new Service() { Name="Keys are sticking", Time=20, Cost=0 },
             new Service() { Name="Pedals not working properly", Time=20, Cost=0 },
             new Service() { Name="One-day refining and regulation", Time=480, Cost=600 },
-            new Service() { Name="Action Pick-up (for full regulation)", Time=30, Cost=0 },
         };
 
         public static List<Service> CleaningServices = new List<Service>()

@@ -28,13 +28,12 @@ namespace Capstone.Controllers
         public ActionResult Index()
         {
             CheckForReminderEmails();
-            var pendingAppointments = _repo.PendingAppointment.FindAll().ToList();
-
+            ViewBag.pendingAppointments = _repo.PendingAppointment.FindAll().ToList();
             ViewBag.completedAppointments = _repo.Appointment.FindByCondition(a => (a.ServiceEnd < DateTime.Now) && (a.IsComplete == false)).Include(a => a.Piano.Client.Address).ToList();
             ViewBag.todaysAppointments = _repo.Appointment.FindByCondition(a => a.ServiceStart.Date == DateTime.Now.Date).Include(a => a.Piano.Client.Address).ToList();
             ViewBag.nextSevenDaysAppointments = _repo.Appointment.FindByCondition(a => (a.ServiceStart.Date > DateTime.Now) && (a.ServiceStart.Date < DateTime.Now.AddDays(7).Date)).Include(a => a.Piano.Client.Address).OrderBy(a => a.ServiceStart).ToList();
             
-            return View(pendingAppointments);
+            return View();
         }
 
         public ActionResult AllClients()
@@ -70,7 +69,7 @@ namespace Capstone.Controllers
             _repo.Address.Update(client.Address);
             _repo.Client.Update(client);
             _repo.Save();
-            return RedirectToAction("AllClients");
+            return RedirectToAction("ClientDetails", new { id = client.ClientId });
         }
 
         public ActionResult ClientDetails(int id)
@@ -84,6 +83,15 @@ namespace Capstone.Controllers
         {
             var piano = _repo.Piano.FindByCondition(p => p.PianoId == id).SingleOrDefault();
             return View(piano);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditPiano(Piano piano)
+        {
+            _repo.Piano.Update(piano);
+            _repo.Save();
+            return RedirectToAction("ClientDetails", new { id = piano.ClientId });
         }
 
         public async Task<ActionResult> CompleteAppointment(int id)
@@ -106,7 +114,9 @@ namespace Capstone.Controllers
             return View(appointment);
         }
 
-        public ActionResult SaveAppointmentChanges(Appointment alteredAppointment)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditAppointment(Appointment alteredAppointment)
         {
             _repo.Appointment.Update(alteredAppointment);
             _repo.Piano.Update(alteredAppointment.Piano);
@@ -159,8 +169,6 @@ namespace Capstone.Controllers
             return View(ruleSet);
         }
 
-        
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CreateRuleSet(CreateNewRuleSetViewModel ruleSet)
@@ -178,7 +186,7 @@ namespace Capstone.Controllers
 
         public ActionResult ViewRuleSets()
         {
-            var ruleSets = _repo.RuleSet.FindAll().ToList();
+            var ruleSets = _repo.RuleSet.FindAll().OrderBy(rs => rs.StartDate).ToList();
             return View(ruleSets);
         }
 
@@ -317,12 +325,8 @@ namespace Capstone.Controllers
 
         private void CreateNewRuleSet(CreateNewRuleSetViewModel ruleSet)
         {
-            // Check for existing/create new address
-            var matchingAddress = _repo.Address.FindByCondition(a => a.StreetAddress == ruleSet.StreetAddress).SingleOrDefault();
-            if (matchingAddress == null)
-            {
-                matchingAddress = CreateAddress(ruleSet.StreetAddress, ruleSet.Zip);
-            }
+            // Create new address
+            var address = CreateAddress(ruleSet.StreetAddress, ruleSet.Zip);
 
             // Create new rule set
             RuleSet newRuleSet = new RuleSet()
@@ -330,7 +334,7 @@ namespace Capstone.Controllers
                 StartDate = ruleSet.StartDate,
                 EndDate = ruleSet.EndDate,
                 Default = ruleSet.Default,
-                HomeAddressId = matchingAddress.AddressId
+                HomeAddressId = address.AddressId
             };
             _repo.RuleSet.Create(newRuleSet);
             _repo.Save();

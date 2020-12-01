@@ -1,21 +1,19 @@
-﻿@model IEnumerable<Capstone.Models.PendingAppointment>
-
-@{
-    ViewData["Title"] = "Pending Appointments";
+﻿@{
+    ViewData["Title"] = "Admin Home";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 
 <div class="row">
     <div class="col-lg-6">
-        @if (ViewBag.completedAppointments == null)
+        <h4>Completed Appointments:</h4>
+        @if (ViewBag.completedAppointments.Count == 0)
         {
             <p>You have no completed appointments to review.</p>
         }
         else
         {
             <div class="row">
-                <h4>Completed Appointments:</h4><br />
                 @foreach (var appointment in ViewBag.completedAppointments)
                 {
                     <div class="col-lg-8">
@@ -28,34 +26,42 @@
                 }
             </div>
         }
+        <br />
+        <h5>Pending Appointments:</h5>
+        @if (ViewBag.pendingAppointments.Count == 0)
+        {
+            <p>You have no pending appointments to review.</p>
+        }
+        else
+        {
+            <table>
+                <tbody>
+                    @foreach (var appointment in ViewBag.pendingAppointments)
+                    {
+                        <tr>
+                            <td>
+                                @appointment.FirstName @appointment.LastName
+                            </td>
+                            <td>
+                                @appointment.PianoMake @appointment.PianoConfiguration
+                            </td>
+                            <td>
+                                @appointment.Services
+                            </td>
+                            <td>
+                                <a asp-action="PendingAppointmentDetails" asp-route-id="@appointment.PendingAppointmentId">Details/Confirm</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
     </div>
     <div class="col-lg-6">
-        <h4>Pending Appointments:</h4><br />
-        <table>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.FirstName) @Html.DisplayFor(modelItem => item.LastName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.PianoMake) @Html.DisplayFor(modelItem => item.PianoConfiguration)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Services)
-                        </td>
-                        <td>
-                            <a asp-action="PendingAppointmentDetails" asp-route-id="@item.PendingAppointmentId">Details/Confirm</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-        <h5>Today's Appointments:</h5>
-        @if (ViewBag.todaysAppointments == null)
+        <h4>Today's Appointments:</h4>
+        @if (ViewBag.todaysAppointments.Count == 0)
         {
-            <p>You have no appointments schedule for today.</p>
+            <p>You have no appointments scheduled for today.</p>
         }
         else
         {
@@ -84,9 +90,9 @@
                 </tbody>
             </table>
         }
-        <br /><br />
+        <br />
         <h5>7 Day Appointment Outlook:</h5>
-        @if (ViewBag.nextSevenDaysAppointments == null)
+        @if (ViewBag.nextSevenDaysAppointments.Count == 0)
         {
             <p>You have no appointments scheduled for the next week.</p>
         }
