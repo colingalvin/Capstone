@@ -46,7 +46,7 @@
             <p><strong>Available Appointments:</strong></p>
             @foreach (var item in ViewBag.availableAppointments)
             {
-                <input asp-for="ServiceStart" value="@item" type="radio">@item.ToString("ddd, MMM dd hh:mm tt")<br />
+                <input asp-for="ServiceStart" value="@item" type="radio">@item.ToString("ddd, MMM dd h:mm tt")<br />
             }
             <br />
             <div class="form-group">

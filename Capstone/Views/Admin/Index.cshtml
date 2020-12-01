@@ -17,10 +17,10 @@
                 @foreach (var appointment in ViewBag.completedAppointments)
                 {
                     <div class="col-lg-8">
-                        <p>@appointment.Piano.Client.FirstName @appointment.Piano.Client.LastName (@appointment.Piano.Make @appointment.Piano.Configuration) - @appointment.ServiceStart</p>
+                        <p>@appointment.Piano.Client.FirstName @appointment.Piano.Client.LastName (@appointment.Piano.Make @appointment.Piano.Configuration)<br />@appointment.ServiceStart.ToString("ddd, MMM dd h:mm tt")</p>
                     </div>
                     <div class="col-lg-4">
-                        <a asp-action="CompleteAppointment" asp-route-id="@appointment.AppointmentId">Complete Appointment</a> |
+                        <a asp-action="CompleteAppointment" asp-route-id="@appointment.AppointmentId">Complete</a> |
                         <a asp-action="EditAppointment" asp-route-id="@appointment.AppointmentId">View/Edit</a>
                     </div>
                 }
@@ -65,30 +65,29 @@
         }
         else
         {
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#mapsModal">View Map</button>
-            <br />
             <table>
                 <tbody>
                     @foreach (var appointment in ViewBag.todaysAppointments)
                     {
                         <tr>
-                            <td>
+                            <td style="width: 175px">
                                 @appointment.Piano.Client.FirstName @appointment.Piano.Client.LastName
                             </td>
-                            <td>
+                            <td style="width: 175px">
                                 @appointment.Piano.Make @appointment.Piano.Configuration
                             </td>
-                            <td>
+                            <td style="width: 125px">
                                 @*Need formatting here*@
-                                @appointment.ServiceStart.TimeOfDay
+                                @appointment.ServiceStart.ToString("h:mm tt")
                             </td>
-                            <td>
+                            <td style="width: 100px">
                                 <a asp-action="EditAppointment" asp-route-id="@appointment.AppointmentId">View/Edit</a>
                             </td>
                         </tr>
                     }
                 </tbody>
-            </table>
+            </table><br />
+            <div><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#mapsModal">View Map</button></div>
         }
         <br />
         <h5>7 Day Appointment Outlook:</h5>
@@ -103,17 +102,17 @@
                     @foreach (var appointment in ViewBag.nextSevenDaysAppointments)
                     {
                         <tr>
-                            <td>
+                            <td style="width: 150px">
                                 @appointment.Piano.Client.FirstName @appointment.Piano.Client.LastName
                             </td>
-                            <td>
+                            <td style="width: 150px">
                                 @appointment.Piano.Make @appointment.Piano.Configuration
                             </td>
-                            <td>
+                            <td style="width: 150px">
                                 @*Need formatting here*@
-                                @appointment.ServiceStart.TimeOfDay
+                                @appointment.ServiceStart.ToString("ddd, h:mm tt")
                             </td>
-                            <td>
+                            <td style="width: 100px">
                                 <a asp-action="EditAppointment" asp-route-id="@appointment.AppointmentId">View/Edit</a>
                             </td>
                         </tr>

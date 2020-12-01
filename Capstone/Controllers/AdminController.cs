@@ -133,7 +133,7 @@ namespace Capstone.Controllers
             {
                 var existingRuleSet = _repo.RuleSet.FindByCondition(rs => rs.RuleSetId == id).Include(rs => rs.Address).SingleOrDefault();
                 var existingBlocks = _repo.AppointmentBlock.FindByCondition(ab => ab.RuleSetId == existingRuleSet.RuleSetId).ToList();
-                var existingDefaultTimes = _repo.DefaultTime.FindByCondition(dt => dt.RuleSetId == existingRuleSet.RuleSetId).ToList();
+                var existingDefaultTimes = _repo.DefaultTime.FindByCondition(dt => dt.RuleSetId == existingRuleSet.RuleSetId).OrderBy(dt => dt.StartTime).ToList();
                 List<DateTime> existingTimes = new List<DateTime>();
                 foreach(var time in existingDefaultTimes)
                 {
@@ -349,35 +349,41 @@ namespace Capstone.Controllers
 
         private void CreateAppointmentBlocks(CreateNewRuleSetViewModel ruleSet, RuleSet newRuleSet)
         {
-            foreach (var day in ruleSet.Days)
+            if(ruleSet.Days != null)
             {
-                AppointmentBlock appointmentBlock = new AppointmentBlock()
+                foreach (var day in ruleSet.Days)
                 {
-                    Day = day,
-                    StartTime = ruleSet.StartTime,
-                    EndTime = ruleSet.EndTime,
-                    RuleSetId = newRuleSet.RuleSetId,
-                    RuleSet = newRuleSet
-                };
-                _repo.AppointmentBlock.Create(appointmentBlock);
+                    AppointmentBlock appointmentBlock = new AppointmentBlock()
+                    {
+                        Day = day,
+                        StartTime = ruleSet.StartTime,
+                        EndTime = ruleSet.EndTime,
+                        RuleSetId = newRuleSet.RuleSetId,
+                        RuleSet = newRuleSet
+                    };
+                    _repo.AppointmentBlock.Create(appointmentBlock);
+                }
+                _repo.Save();
             }
-            _repo.Save();
         }
 
         private void CreateDefaultTimes(CreateNewRuleSetViewModel ruleSet, RuleSet newRuleSet)
         {
-            // Create new default appointment times
-            foreach (var time in ruleSet.DefaultTimes)
+            if(ruleSet.DefaultTimes != null)
             {
-                DefaultTime defaultTime = new DefaultTime()
+                // Create new default appointment times
+                foreach (var time in ruleSet.DefaultTimes)
                 {
-                    StartTime = time,
-                    RuleSetId = newRuleSet.RuleSetId,
-                    RuleSet = newRuleSet
-                };
-                _repo.DefaultTime.Create(defaultTime);
+                    DefaultTime defaultTime = new DefaultTime()
+                    {
+                        StartTime = time,
+                        RuleSetId = newRuleSet.RuleSetId,
+                        RuleSet = newRuleSet
+                    };
+                    _repo.DefaultTime.Create(defaultTime);
+                }
+                _repo.Save();
             }
-            _repo.Save();
         }
 
         private Address CreateAddress(string streetAddress, int zip)
@@ -396,7 +402,7 @@ namespace Capstone.Controllers
         private void UpdateExistingRuleSet(CreateNewRuleSetViewModel ruleSet)
         {
             // Update/save changes to existing rule set
-            RuleSet existingRuleSet = _repo.RuleSet.FindByCondition(rs => rs.RuleSetId == ruleSet.RuleSetId).SingleOrDefault();
+            RuleSet existingRuleSet = _repo.RuleSet.FindByCondition(rs => rs.RuleSetId == ruleSet.RuleSetId).Include(rs => rs.Address).SingleOrDefault();
             existingRuleSet.StartDate = ruleSet.StartDate;
             existingRuleSet.EndDate = ruleSet.EndDate;
             existingRuleSet.Default = ruleSet.Default;
@@ -432,17 +438,20 @@ namespace Capstone.Controllers
             }
             _repo.Save();
 
-            // Create new default appointment times associated with rule set id
-            foreach (DateTime time in ruleSet.DefaultTimes)
+            if(ruleSet.DefaultTimes != null)
             {
-                DefaultTime defaultTime = new DefaultTime()
+                // Create new default appointment times associated with rule set id
+                foreach (DateTime time in ruleSet.DefaultTimes)
                 {
-                    StartTime = time,
-                    RuleSetId = existingRuleSet.RuleSetId,
-                    RuleSet = existingRuleSet
-                };
-                _repo.DefaultTime.Create(defaultTime);
-                _repo.Save();
+                    DefaultTime defaultTime = new DefaultTime()
+                    {
+                        StartTime = time,
+                        RuleSetId = existingRuleSet.RuleSetId,
+                        RuleSet = existingRuleSet
+                    };
+                    _repo.DefaultTime.Create(defaultTime);
+                    _repo.Save();
+                }
             }
         }
     }
