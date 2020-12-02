@@ -38,7 +38,6 @@ namespace Capstone.Models
         [Display(Name = "Appointment End")]
         public DateTime ServiceEnd { get; set; }
 
-        [Display(Name = "Completed?")]
         public bool IsComplete { get; set; }
     }
 }

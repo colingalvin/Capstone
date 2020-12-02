@@ -24,7 +24,7 @@ namespace Capstone.Services
                 $"You will receive another email when your service appointmnt has been confirmed. " +
                 $"The details of your service are listed below; if any changes to your appointment are needed, please contact us at wehmeiermusicservice@gmail.com.\n\n" +
                 $"Appointment Details:\n" +
-                $"\tRequested Time: {pendingAppointment.ServiceStart}\n" +
+                $"\tRequested Time: {pendingAppointment.ServiceStart:h:mm tt}\n" +
                 $"\tServices Requested: {pendingAppointment.Services}\n" +
                 $"\tEstimated Cost: {pendingAppointment.EstimatedCost:C}*\n" +
                 $"\t\t*repair services are billed at an hourly rate depending on severity of repair - final cost determined at time of service\n" +
@@ -45,7 +45,7 @@ namespace Capstone.Services
             {
                 Text = $"Dear {appointment.Piano.Client.FirstName},\n\n" +
                 $"Your piano service request has been confirmed. Find the details of your appointment below:" +
-                $"\tTime: {appointment.ServiceStart} - {appointment.ServiceEnd.TimeOfDay}\n" +
+                $"\tTime: {appointment.ServiceStart:h:mm tt} - {appointment.ServiceEnd:h:mm tt}\n" +
                 $"\tServices: {appointment.Services}\n" +
                 $"\tEstimated Cost: {appointment.EstimatedCost:C}*\n" +
                 $"\t\t*repair services are billed at an hourly rate depending on severity of repair - final cost determined at time of service\n" +
@@ -84,7 +84,7 @@ namespace Capstone.Services
             email.Body = new TextPart("plain")
             {
                 Text = $"Dear {appointment.Piano.Client.FirstName},\n\n" +
-                $"This is a reminder for your scheduled piano service tomorrow from {appointment.ServiceStart.TimeOfDay:t} to {appointment.ServiceEnd.TimeOfDay:t}. " +
+                $"This is a reminder for your scheduled piano service tomorrow from {appointment.ServiceStart:h:mm tt} to {appointment.ServiceEnd:h:mm tt}. " +
                 $"The expected cost of your service is {appointment.EstimatedCost:C}, though any repair services needed will be billed at an hourly rate upon completion. " +
                 $"Please have an acceptable form of payment (Cash, Check, Venmo, or Apple Pay) ready at time of service. " +
                 $"In the event that you need to change or cancel your service, please contact us as soon as possible at wehmeiermusicservice@gmail.com.\n\n" +

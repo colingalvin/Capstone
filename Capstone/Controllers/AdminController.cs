@@ -30,7 +30,7 @@ namespace Capstone.Controllers
             CheckForReminderEmails();
             ViewBag.pendingAppointments = _repo.PendingAppointment.FindAll().ToList();
             ViewBag.completedAppointments = _repo.Appointment.FindByCondition(a => (a.ServiceEnd < DateTime.Now) && (a.IsComplete == false)).Include(a => a.Piano.Client.Address).ToList();
-            ViewBag.todaysAppointments = _repo.Appointment.FindByCondition(a => a.ServiceStart.Date == DateTime.Now.Date).Include(a => a.Piano.Client.Address).ToList();
+            ViewBag.todaysAppointments = _repo.Appointment.FindByCondition(a => (a.ServiceStart.Date == DateTime.Now.Date) && (a.ServiceEnd > DateTime.Now)).Include(a => a.Piano.Client.Address).ToList();
             ViewBag.nextSevenDaysAppointments = _repo.Appointment.FindByCondition(a => (a.ServiceStart.Date > DateTime.Now) && (a.ServiceStart.Date < DateTime.Now.AddDays(7).Date)).Include(a => a.Piano.Client.Address).OrderBy(a => a.ServiceStart).ToList();
             
             return View();

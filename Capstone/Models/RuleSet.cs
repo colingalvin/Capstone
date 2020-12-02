@@ -20,7 +20,7 @@ namespace Capstone.Models
         [DataType(DataType.Date)]
         public DateTime? EndDate { get; set; }
 
-        [Display(Name = "Default?")]
+        [Display(Name = "Default")]
         public bool Default { get; set; }
 
         [Display(Name = "Home Location:")]

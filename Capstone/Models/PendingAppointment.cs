@@ -43,7 +43,7 @@ namespace Capstone.Models
         [Display(Name = "Estimated Duration")]
         public int EstimatedDuration { get; set; }
 
-        [Display(Name = "Please enter any additional notes concerning this service:")]
+        [Display(Name = "Notes")]
         public string CustomerNotes { get; set; }
 
         [Display(Name = "Preferred Appointment Date")]

@@ -130,7 +130,7 @@ namespace Capstone.Controllers
                 else
                 {
                     // Find default times
-                    var defaultTimes = _repo.DefaultTime.FindByCondition(dt => dt.RuleSetId == currentRuleSet.RuleSetId).ToList();
+                    var defaultTimes = _repo.DefaultTime.FindByCondition(dt => dt.RuleSetId == currentRuleSet.RuleSetId).OrderBy(dt => dt.StartTime).ToList();
 
                     // Find appointment block in current rule set for correct day of week
                     var appointmentBlock = _repo.AppointmentBlock.FindByCondition(ab => (ab.RuleSetId == currentRuleSet.RuleSetId) && (ab.Day == currentDay.DayOfWeek)).SingleOrDefault();
